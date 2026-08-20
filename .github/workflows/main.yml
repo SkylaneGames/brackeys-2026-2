@@ -1,0 +1,194 @@
+name: Build and Deploy
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push but only for tags starting with "v" (i.e. v0.1)
+  push:
+    tags: v*
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  build-webgl:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+      
+      - name: Godot - Build
+        run: mkdir -p build/web && godot --headless --export-release Web ../build/web/index.html src/project.godot
+      
+#      - name: Create Archive
+#        run: tar acvf game.zip -C build/web .
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: game_webgl
+          path: ./build/web/
+          retention-days: 9
+  
+  build-linux:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+      
+      - name: Godot - Build
+        run: mkdir -p build/linux && godot --headless --export-release Linux ../build/linux/game src/project.godot
+      
+#     - name: Create Archive
+#        run: tar acvf game.zip -C build/linux .
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: game_linux
+          path: ./build/linux
+          retention-days: 9
+
+  build-win64:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+      
+      - name: Godot - Build
+        run: mkdir -p build/windows && godot --headless --export-release Windows ../build/windows/game.exe src/project.godot
+      
+#      - name: Create Archive
+#        run: tar acvf game.zip -C build/windows .
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: game_win64
+          path: ./build/windows
+          retention-days: 9
+
+#   build-osx:
+#     runs-on: self-hosted
+# 
+#     steps:
+#       - uses: actions/checkout@v6.0.2
+#       
+#       - name: Godot - Build
+#         run: mkdir -p build/macos && godot --headless --export-release macOS ../build/macos/game src/project.godot
+#       
+#       - name: Create Archive
+#         run: tar acvf game.zip -C build/macos .
+# 
+#       - name: Upload a Build Artifact
+#         uses: actions/upload-artifact@v7.0.0
+#         with:
+#           name: game_osx
+#           path: ./build/macos
+#           retention-days: 9
+         
+  deploy-webgl:
+    runs-on: windows-latest
+    needs: [build-webgl]
+    name: Deploy to itch.io (Web)
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      itch_channel: ${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_NAME }}:web
+    steps:
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: game_webgl
+          path: bin
+      - name: Configure Butler
+        run: |
+          Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip
+          Expand-Archive -Path butler.zip -DestinationPath .
+          ./butler.exe -V
+          ./butler.exe login
+        shell: powershell
+      - name: Push to itch.io
+        run: ./butler.exe push ./bin $env:itch_channel
+        shell: powershell
+         
+  deploy-win64:
+    runs-on: windows-latest
+    needs: [build-win64]
+    name: Deploy to itch.io (win64)
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      itch_channel: ${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_NAME }}:win64
+    steps:
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: game_win64
+          path: bin
+      - name: Configure Butler
+        run: |
+          Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip
+          Expand-Archive -Path butler.zip -DestinationPath .
+          ./butler.exe -V
+          ./butler.exe login
+        shell: powershell
+      - name: Push to itch.io
+        run: ./butler.exe push ./bin $env:itch_channel
+        shell: powershell
+         
+#  deploy-osx:
+#    runs-on: windows-latest
+#    needs: [build-osx]
+#    name: Deploy to itch.io (OSX)
+#    env:
+#      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+#      itch_channel: ${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_NAME }}:osx
+#    steps:
+#      - name: Download Game Artifact
+#        uses: actions/download-artifact@v8.0.1
+#        with:
+#          name: game_osx
+#      - name: Configure Butler
+#        run: |
+#          Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip
+#          Expand-Archive -Path butler.zip -DestinationPath .
+#          ./butler.exe -V
+#          ./butler.exe login
+#        shell: powershell
+#      - name: Push to itch.io
+#        run: ./butler.exe push ./game.zip $env:itch_channel
+#        shell: powershell
+
+  deploy-linux:
+    runs-on: windows-latest
+    needs: [build-linux]
+    name: Deploy to itch.io (Linux)
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      itch_channel: ${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_NAME }}:linux
+    steps:
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: game_linux
+          path: bin
+      - name: Configure Butler
+        run: |
+          Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip
+          Expand-Archive -Path butler.zip -DestinationPath .
+          ./butler.exe -V
+          ./butler.exe login
+        shell: powershell
+      - name: Push to itch.io
+        run: ./butler.exe push ./bin $env:itch_channel
+        shell: powershell
+
+  # notify:
+  #   runs-on: windows-latest
+  #   needs: [deploy-webgl, deploy-win64, deploy-osx]
+  #   name: Notify Discord
+  #   env:
+  #     itch_url: https://${{ secrets.ITCH_USERNAME }}.itch.io/${{ secrets.ITCH_GAME_NAME }}
+  #   if: success() 
+  #   steps:
+  #     - name: Notify Discord
+  #       run: Invoke-WebRequest -Method Post -Body @{content="New build deployed - $env:itch_url"} -Uri ${{ secrets.DISCORD_WEBHOOK_URL }}
+  #       shell: powershell
