@@ -5,9 +5,9 @@ enum FailureReason { PLAYER_DIED, LEVEL_FAILED }
 
 signal state_changed(state: GameState)
 
-const TITLE_SCENE := "res://ui/title_screen.tscn"
-const GAME_OVER_SCENE := "res://ui/game_over_screen.tscn"
-const LEVEL_SCENES: Array[String] = ["res://levels/asteroid_level.tscn"]
+const TITLE_SCENE := "res://scenes/ui/title_screen.tscn"
+const GAME_OVER_SCENE := "res://scenes/ui/game_over_screen.tscn"
+const LEVEL_SCENES: Array[String] = ["res://scenes/levels/asteroid_level.tscn"]
 
 var state: GameState = GameState.TITLE
 var current_level_index := 0

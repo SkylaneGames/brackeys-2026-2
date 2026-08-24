@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cgvsklp5ko5x3"]
 
-[ext_resource type="Script" uid="uid://xnnmojxqbril" path="res://levels/asteroid_level.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://4tafg0sl2ysx" path="res://player/player.tscn" id="2"]
+[ext_resource type="Script" uid="uid://xnnmojxqbril" path="res://scripts/levels/asteroid_level.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://4tafg0sl2ysx" path="res://scenes/player/player.tscn" id="2"]
 
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
