@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://1k65w8n7scol"]
+
+[ext_resource type="PackedScene" uid="uid://v7aw1hd0l6ir" path="res://scenes/starship.tscn" id="1_2rr2g"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_w5pmr"]
+
+[node name="GameTest" type="Node2D" unique_id=1914183810]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1462533064]
+scale = Vector2(68, 54)
+texture = SubResource("PlaceholderTexture2D_w5pmr")
+
+[node name="Starship" parent="." unique_id=998396290 instance=ExtResource("1_2rr2g")]
