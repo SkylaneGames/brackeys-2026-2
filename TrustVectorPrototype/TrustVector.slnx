@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="TrustVector.Console/TrustVector.Console.csproj" />
+  <Project Path="TrustVector.Core/TrustVector.Core.csproj" />
+</Solution>
