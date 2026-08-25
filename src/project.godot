@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Game"
-run/main_scene="uid://cgvsklp5ko5x3"
+run/main_scene="uid://le81vgnolpcw"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://core/game_manager.gd"
+GameManager="*res://scripts/core/game_manager.gd"
 
 [display]
 
