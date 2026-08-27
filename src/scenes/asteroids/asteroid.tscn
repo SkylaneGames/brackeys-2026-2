@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://co1ifmdmpkc6m"]
 
 [ext_resource type="Script" uid="uid://rt4s3nyucclk" path="res://scripts/asteroids/asteroid.gd" id="1_asteroid"]
+[ext_resource type="Texture2D" uid="uid://bv1mc18j27d7b" path="res://assets/sprites/asteroid_1.png" id="2_nxpf8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_asteroid"]
 size = Vector2(112, 72)
@@ -10,9 +11,9 @@ collision_layer = 2
 input_pickable = false
 script = ExtResource("1_asteroid")
 
-[node name="Box" type="Polygon2D" parent="." unique_id=185559610]
-color = Color(0.42, 0.45, 0.52, 1)
-polygon = PackedVector2Array(-56, -36, 56, -36, 56, 36, -56, 36)
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1328619706]
+scale = Vector2(3.5, 3.5)
+texture = ExtResource("2_nxpf8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=908428376]
 shape = SubResource("RectangleShape2D_asteroid")

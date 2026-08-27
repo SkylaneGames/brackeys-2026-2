@@ -3,7 +3,7 @@ extends Level
 const LANE_OFFSETS: Array[int] = [-1, 0, 1]
 
 @export var asteroid_scene: PackedScene
-@export_range(5, 7) var lane_count := 6
+@export_range(5, 20) var lane_count := 6
 @export_range(1.0, 1000.0) var asteroid_fall_speed := 180.0
 @export_range(80.0, 400.0) var row_spacing := 150.0
 
@@ -39,7 +39,7 @@ func _spawn_asteroid_row() -> void:
 			continue
 		var asteroid := asteroid_scene.instantiate() as Asteroid
 		asteroid.position = Vector2((lane + 0.5) * lane_width, -50.0)
-		asteroid.scale.x = (lane_width - 12.0) / 112.0
+		# asteroid.scale.x = (lane_width - 12.0) / 112.0
 		asteroid.fall_speed = asteroid_fall_speed
 		asteroids.add_child(asteroid)
 

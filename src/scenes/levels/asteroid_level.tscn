@@ -7,6 +7,7 @@
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
 asteroid_scene = ExtResource("3")
+lane_count = 12
 row_spacing = 200.0
 player_scene = ExtResource("2")
 
