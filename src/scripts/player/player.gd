@@ -8,6 +8,8 @@ signal died
 @export var move_speed := 420.0
 @export var invulnerability_duration := 1.5
 
+@export var explosion_template: PackedScene
+
 var lives: int
 var invulnerability_left := 0.0
 
@@ -31,6 +33,9 @@ func take_hit() -> void:
 	lives -= 1
 	invulnerability_left = invulnerability_duration
 	lives_changed.emit(lives)
+	if explosion_template != null:
+		var explosion: Node = explosion_template.instantiate()
+		add_child(explosion)
 	if lives == 0:
 		died.emit()
 

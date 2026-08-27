@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://duinqo3ybc8mg" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="SpriteFrames" uid="uid://becg8uqnj6xqh" path="res://scenes/player/ship_sprite_frames.tres" id="2_gmlin"]
+[ext_resource type="PackedScene" uid="uid://ctc8vaj8tayk" path="res://scenes/effects/explosion.tscn" id="2_lvxji"]
 [ext_resource type="AudioStream" uid="uid://dt245baw0oj0l" path="res://assets/sounds/the-quiet-noise-of-a-spaceship-flying-in-the-distance.mp3" id="3_gmlin"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
@@ -10,8 +11,7 @@ height = 24.0
 
 [node name="Player" type="CharacterBody2D" unique_id=249397979]
 script = ExtResource("1")
-starting_lives = null
-move_speed = null
+explosion_template = ExtResource("2_lvxji")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1342632573]
 shape = SubResource("CapsuleShape2D_player")
