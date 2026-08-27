@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://bslhpv74dh0a1"]
+
+[ext_resource type="PackedScene" uid="uid://kejnbd2s31om" path="res://scenes/ai_systems/ai_nav_system.tscn" id="1_0mwgc"]
+[ext_resource type="Script" uid="uid://bggied5h0nsm8" path="res://scenes/ui/hud.gd" id="1_hqnrr"]
+
+[node name="HUD" type="CanvasLayer" unique_id=379728485]
+script = ExtResource("1_hqnrr")
+
+[node name="NavSystems" type="Control" parent="." unique_id=2116358175]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AiNavSystem" parent="NavSystems" unique_id=1385449579 instance=ExtResource("1_0mwgc")]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 210.0
+offset_bottom = 246.0
+
+[node name="AiNavSystem2" parent="NavSystems" unique_id=691225376 instance=ExtResource("1_0mwgc")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 1010.0
+offset_top = 50.0
+offset_right = 1170.0
+offset_bottom = 246.0
+grow_horizontal = 0
+designation = "B"
