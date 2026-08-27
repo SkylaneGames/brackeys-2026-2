@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://duinqo3ybc8mg" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://d0wyf0u3pv1qq" path="res://assets/sprites/PlayerShip.png" id="2_rkbax"]
+[ext_resource type="AudioStream" uid="uid://dt245baw0oj0l" path="res://assets/sounds/the-quiet-noise-of-a-spaceship-flying-in-the-distance.mp3" id="3_gmlin"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 radius = 11.0
@@ -48,3 +49,7 @@ shape = SubResource("CapsuleShape2D_player")
 sprite_frames = SubResource("SpriteFrames_w5pmr")
 autoplay = "default"
 frame_progress = 0.3691716
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=200149073]
+stream = ExtResource("3_gmlin")
+autoplay = true
