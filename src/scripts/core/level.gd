@@ -26,6 +26,7 @@ func spawn_player() -> void:
 	if player == null:
 		push_error("Configured player scene must use the Player script.")
 		return
-	add_child(player)
-	player.global_position = player_spawn.global_position
+
+	# Place player under spawn point so it inherits it's position, avoiding them spawning in collision with an asteroid.
+	player_spawn.add_child(player)
 	player.died.connect(player_died.emit)
