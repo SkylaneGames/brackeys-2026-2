@@ -1,35 +1,6 @@
 [gd_scene format=3 uid="uid://v7aw1hd0l6ir"]
 
-[ext_resource type="Texture2D" uid="uid://d0wyf0u3pv1qq" path="res://assets/sprites/PlayerShip.png" id="1_hbxx7"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fv7vm"]
-atlas = ExtResource("1_hbxx7")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jk7xf"]
-atlas = ExtResource("1_hbxx7")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qyfiv"]
-atlas = ExtResource("1_hbxx7")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_w5pmr"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fv7vm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_jk7xf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qyfiv")
-}],
-"loop": 1,
-"name": &"default",
-"speed": 10.0
-}]
+[ext_resource type="SpriteFrames" uid="uid://becg8uqnj6xqh" path="res://scenes/player/ship_sprite_frames.tres" id="1_hbxx7"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0pf81"]
 radius = 12.0
@@ -38,9 +9,9 @@ radius = 12.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1489158195]
 texture_filter = 1
-sprite_frames = SubResource("SpriteFrames_w5pmr")
+sprite_frames = ExtResource("1_hbxx7")
 autoplay = "default"
-frame_progress = 0.92084634
+frame_progress = 0.93256044
 
 [node name="AnimatableBody2D" type="AnimatableBody2D" parent="AnimatedSprite2D" unique_id=136193818]
 
