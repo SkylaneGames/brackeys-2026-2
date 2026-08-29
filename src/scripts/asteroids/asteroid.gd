@@ -1,6 +1,8 @@
 class_name Asteroid
 extends Area2D
 
+signal destroyed
+
 @export var fall_speed := 180.0
 @export var despawn_y := 780.0
 @export var explosion_template: PackedScene
@@ -59,6 +61,7 @@ func try_destroy() -> bool:
 		var explosion := explosion_template.instantiate() as Node2D
 		get_parent().add_child(explosion)
 		explosion.global_position = global_position
+	destroyed.emit()
 	queue_free()
 	return true
 

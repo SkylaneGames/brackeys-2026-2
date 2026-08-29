@@ -16,6 +16,7 @@ var last_failure_reason := FailureReason.PLAYER_DIED
 var final_score := 0
 var final_time := 0.0
 var run_escaped := false
+var final_mastery: Dictionary = {}
 
 
 func _ready() -> void:
@@ -33,6 +34,7 @@ func start_run() -> void:
 	final_score = 0
 	final_time = 0.0
 	run_escaped = false
+	final_mastery.clear()
 	get_tree().paused = false
 	_set_state(GameState.PLAYING)
 	_change_scene(LEVEL_SCENES[current_level_index])
@@ -53,6 +55,7 @@ func register_level(level: Level) -> void:
 	level.failed.connect(_on_level_failed)
 	level.player_died.connect(_on_player_died)
 	level.run_result_changed.connect(_on_run_result_changed)
+	level.run_mastery_changed.connect(_on_run_mastery_changed)
 
 
 func set_paused(paused: bool) -> void:
@@ -88,6 +91,10 @@ func _on_player_died() -> void:
 func _on_run_result_changed(score: int, elapsed_time: float) -> void:
 	final_score = score
 	final_time = elapsed_time
+
+
+func _on_run_mastery_changed(stats: Dictionary) -> void:
+	final_mastery = stats.duplicate()
 
 
 func _show_game_over() -> void:

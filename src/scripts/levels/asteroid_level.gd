@@ -13,10 +13,11 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @export_range(0.0, 3.0) var trust_handover_delay := 0.25
 @export_range(0.0, 1.0) var benign_lie_chance := 0.10
 @export_range(0.0, 1.0) var risky_destructible_chance := 0.35
+@export_range(0.0, 1.0) var standard_destructible_chance := 0.15
 @export_range(0.4, 0.9) var asteroid_lane_fill_ratio := 0.65
 @export_range(0.3, 1.0) var risky_asteroid_scale := 0.7
 @export_range(0.0, 1.0) var two_lane_move_chance := 0.0
-@export_range(0.0, 1.0) var repair_sector_chance := 0.5
+@export_range(0.0, 1.0) var repair_sector_chance := 0.3
 @export_range(1.0, 4.0) var trusted_game_speed_multiplier := 1.65
 @export var speed_transition_rate := 260.0
 @export var escape_distance := 15000.0
@@ -24,6 +25,10 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @export var role_swap_interval := 9.0
 @export var minimum_role_swap_interval := 5.0
 @export var maximum_fall_speed := 450.0
+@export var trusted_maximum_fall_speed := 800.0
+@export_range(0.05, 1.0) var trusted_overcap_growth_factor := 0.35
+@export_range(0.5, 1.0) var impact_speed_multiplier := 0.70
+@export_range(0.01, 1.0) var impact_speed_recovery_rate := 0.075
 
 @onready var lives_label: Label = %LivesLabel
 @onready var pause_menu: Control = %PauseMenu
@@ -34,14 +39,16 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @onready var score_label: Label = %ScoreLabel
 @onready var time_label: Label = %TimeLabel
 @onready var escape_progress: ProgressBar = %EscapeProgress
+@onready var weapon_label: Label = %WeaponLabel
+@onready var weapon_heat: ProgressBar = %WeaponHeat
 @onready var debug_trust_button: Button = %DebugTrustButton
 @onready var alpha_ai: NavAi = %AlphaAI
 @onready var beta_ai: NavAi = %BetaAI
 
 var safe_lane := 0
 var alpha_is_honest := true
-var trusted_ai := TrustedAi.ALPHA
-var pending_trusted_ai := TrustedAi.ALPHA
+var trusted_ai := TrustedAi.NONE
+var pending_trusted_ai := TrustedAi.NONE
 var trust_handover_left := 0.0
 var elapsed_time := 0.0
 var score := 0
@@ -52,6 +59,18 @@ var debug_trust_revealed := false
 var distance_remaining := 0.0
 var run_finished := false
 var displayed_manual_state := false
+var link_severed_left := 0.0
+var impact_speed_factor := 1.0
+
+var trusted_rows := 0
+var correct_trust_rows := 0
+var clean_rows := 0
+var successful_recoveries := 0
+var blockers_destroyed := 0
+var damage_taken := 0
+var manual_time := 0.0
+var current_correct_streak := 0
+var longest_correct_streak := 0
 
 var alpha_plan: Array[int] = []
 var beta_plan: Array[int] = []
@@ -67,7 +86,10 @@ var sector_row_index := 0
 func _ready() -> void:
 	super()
 	player.lives_changed.connect(_on_lives_changed)
+	player.damage_taken.connect(_on_player_damage_taken)
+	player.weapon_heat_changed.connect(_on_weapon_heat_changed)
 	_on_lives_changed(player.lives)
+	_on_weapon_heat_changed(player.weapon_heat, player.weapon_overheated)
 	GameManager.state_changed.connect(_on_game_state_changed)
 	debug_trust_button.pressed.connect(_on_debug_trust_pressed)
 	safe_lane = floori(lane_count / 2.0)
@@ -87,6 +109,9 @@ func _process(delta: float) -> void:
 	if run_finished:
 		return
 	elapsed_time += delta
+	if trusted_ai == TrustedAi.NONE:
+		manual_time += delta
+	link_severed_left = maxf(link_severed_left - delta, 0.0)
 	score = floori(elapsed_time * 10.0)
 	_update_difficulty(delta)
 	distance_remaining = maxf(distance_remaining - current_fall_speed * delta, 0.0)
@@ -112,8 +137,42 @@ func _process(delta: float) -> void:
 func _update_active_rows(delta: float) -> void:
 	for row in active_rows:
 		row["y"] = float(row["y"]) + current_fall_speed * delta
+	_record_current_row_state()
 	while not active_rows.is_empty() and float(active_rows[0]["y"]) > player.global_position.y + ROW_CLEARANCE_DISTANCE:
-		active_rows.pop_front()
+		var resolved_row: Dictionary = active_rows.pop_front()
+		_resolve_row_mastery(resolved_row)
+
+
+func _record_current_row_state() -> void:
+	if active_rows.is_empty():
+		return
+	var row := active_rows[0]
+	if trusted_ai != TrustedAi.NONE:
+		row["committed_ai"] = int(trusted_ai)
+	if player.is_correcting:
+		row["corrected"] = true
+
+
+func _resolve_row_mastery(row: Dictionary) -> void:
+	var committed_ai := int(row.get("committed_ai", TrustedAi.NONE))
+	if committed_ai == TrustedAi.NONE:
+		current_correct_streak = 0
+		return
+	trusted_rows += 1
+	var correct_ai := TrustedAi.ALPHA if bool(row["happy_is_alpha"]) else TrustedAi.BETA
+	var was_correct := committed_ai == correct_ai
+	var took_damage := bool(row.get("took_damage", false))
+	if was_correct:
+		correct_trust_rows += 1
+		current_correct_streak += 1
+		longest_correct_streak = maxi(longest_correct_streak, current_correct_streak)
+		if not bool(row.get("corrected", false)) and not took_damage:
+			clean_rows += 1
+	else:
+		current_correct_streak = 0
+		if bool(row.get("recovery_action", false)) and not took_damage:
+			successful_recoveries += 1
+	run_mastery_changed.emit(_mastery_stats())
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -149,11 +208,14 @@ func _update_trust_handover(delta: float) -> void:
 
 
 func _clear_trust() -> void:
+	var had_link := trusted_ai != TrustedAi.NONE or trust_handover_left > 0.0
 	trusted_ai = TrustedAi.NONE
 	pending_trusted_ai = TrustedAi.NONE
 	trust_handover_left = 0.0
 	player.set_navigation_enabled(false)
 	player.set_navigation_speed_multiplier(1.0)
+	if had_link:
+		link_severed_left = 1.25
 
 
 func _generate_sector() -> void:
@@ -246,9 +308,17 @@ func _spawn_asteroid_row() -> void:
 		# wider. Scale uniformly so the art and collision shape stay asteroid-sized
 		# rather than becoming wide horizontal walls.
 		var asteroid_scale := lane_width * asteroid_lane_fill_ratio / 112.0
+		var is_destructible := false
 		if lane == liar_lane:
 			asteroid_scale *= risky_asteroid_scale
-			asteroid.set_destructible(liar_blocker_is_destructible[sector_row_index])
+			is_destructible = liar_blocker_is_destructible[sector_row_index]
+		elif lane >= 0 and lane < lane_count and randf() < standard_destructible_chance:
+			# Occasionally replace a solid playable-lane asteroid with another
+			# marked small blocker. Boundary buffers remain permanently solid.
+			asteroid_scale *= risky_asteroid_scale
+			is_destructible = true
+		asteroid.set_destructible(is_destructible)
+		asteroid.destroyed.connect(_on_blocker_destroyed)
 		asteroid.scale = Vector2.ONE * asteroid_scale
 		asteroid.fall_speed = current_fall_speed
 		asteroids.add_child(asteroid)
@@ -262,6 +332,10 @@ func _spawn_asteroid_row() -> void:
 		"beta_lane": beta_plan[sector_row_index],
 		"happy_is_alpha": sector_happy_is_alpha,
 		"has_repair": has_repair,
+		"committed_ai": int(TrustedAi.NONE),
+		"corrected": false,
+		"recovery_action": false,
+		"took_damage": false,
 		"y": -50.0,
 	})
 	sector_row_index += 1
@@ -332,12 +406,25 @@ func _next_role_swap_interval() -> float:
 
 
 func _update_difficulty(delta: float) -> void:
-	var cruise_speed := minf(maximum_fall_speed, asteroid_fall_speed + elapsed_time * 0.55)
-	var target_speed := cruise_speed * (trusted_game_speed_multiplier if trusted_ai != TrustedAi.NONE else 1.0)
+	impact_speed_factor = move_toward(impact_speed_factor, 1.0, impact_speed_recovery_rate * delta)
+	var uncapped_cruise_speed := asteroid_fall_speed + elapsed_time * 0.55
+	var target_speed := minf(maximum_fall_speed, uncapped_cruise_speed)
+	if trusted_ai != TrustedAi.NONE:
+		var previous_trusted_max := maximum_fall_speed * trusted_game_speed_multiplier
+		if uncapped_cruise_speed <= maximum_fall_speed:
+			target_speed = uncapped_cruise_speed * trusted_game_speed_multiplier
+		else:
+			var overcap_speed := (uncapped_cruise_speed - maximum_fall_speed) * trusted_game_speed_multiplier * trusted_overcap_growth_factor
+			target_speed = minf(trusted_maximum_fall_speed, previous_trusted_max + overcap_speed)
+	target_speed *= impact_speed_factor
 	var next_speed := move_toward(current_fall_speed, target_speed, speed_transition_rate * delta)
 	if is_equal_approx(next_speed, current_fall_speed):
 		return
-	current_fall_speed = next_speed
+	_set_current_fall_speed(next_speed)
+
+
+func _set_current_fall_speed(value: float) -> void:
+	current_fall_speed = maxf(value, 1.0)
 	spawn_timer.wait_time = row_spacing / current_fall_speed
 	for child in asteroids.get_children():
 		var asteroid := child as Asteroid
@@ -353,15 +440,18 @@ func _update_hud() -> void:
 	time_label.text = "ESCAPE  %02d:%02d" % [time_left / 60, time_left % 60]
 	escape_progress.value = escape_distance - distance_remaining
 	_update_advice()
-	if trust_handover_left > 0.0:
-		_update_trust_display()
+	_update_trust_display()
 	_update_debug_trust_display()
 
 
 func _update_trust_display() -> void:
 	if trusted_ai == TrustedAi.NONE and trust_handover_left <= 0.0:
-		trust_label.text = "TRUST NO ONE"
-		trust_label.modulate = Color("b7c7dd")
+		if link_severed_left > 0.0:
+			trust_label.text = "LINK SEVERED — Q / E RECONNECT"
+			trust_label.modulate = Color("f6d365")
+		else:
+			trust_label.text = "TRUST NO ONE"
+			trust_label.modulate = Color("b7c7dd")
 	elif trust_handover_left > 0.0:
 		trust_label.text = "LINKING %s  %.1f" % ["ALPHA" if pending_trusted_ai == TrustedAi.ALPHA else "BETA", trust_handover_left]
 		trust_label.modulate = Color("f6d365")
@@ -372,6 +462,7 @@ func _update_trust_display() -> void:
 	alpha_ai.set_active(trust_is_active and trusted_ai == TrustedAi.ALPHA)
 	beta_ai.set_active(trust_is_active and trusted_ai == TrustedAi.BETA)
 	world_route_overlay.visible = trusted_ai != TrustedAi.NONE
+	world_route_overlay.set_trusted_route(int(trusted_ai))
 	_update_guidance()
 
 
@@ -380,6 +471,7 @@ func _finish_run(escaped: bool) -> void:
 		return
 	run_finished = true
 	spawn_timer.stop()
+	run_mastery_changed.emit(_mastery_stats())
 	if escaped:
 		completed.emit()
 	else:
@@ -388,6 +480,49 @@ func _finish_run(escaped: bool) -> void:
 
 func _on_lives_changed(lives: int) -> void:
 	lives_label.text = "LIVES: %d" % lives
+
+
+func _on_player_damage_taken() -> void:
+	damage_taken += 1
+	impact_speed_factor = minf(impact_speed_factor, impact_speed_multiplier)
+	_set_current_fall_speed(current_fall_speed * impact_speed_multiplier)
+	if not active_rows.is_empty():
+		active_rows[0]["took_damage"] = true
+	run_mastery_changed.emit(_mastery_stats())
+
+
+func _on_weapon_heat_changed(heat: float, overheated: bool) -> void:
+	weapon_heat.value = heat * 100.0
+	if overheated:
+		weapon_label.text = "WEAPON  OVERHEATED"
+		weapon_label.modulate = Color("ff7272")
+	elif heat > 0.7:
+		weapon_label.text = "WEAPON  HOT"
+		weapon_label.modulate = Color("f6d365")
+	else:
+		weapon_label.text = "WEAPON  READY"
+		weapon_label.modulate = Color("8cf7ff")
+
+
+func _on_blocker_destroyed() -> void:
+	blockers_destroyed += 1
+	if not active_rows.is_empty():
+		active_rows[0]["recovery_action"] = true
+	run_mastery_changed.emit(_mastery_stats())
+
+
+func _mastery_stats() -> Dictionary:
+	return {
+		"trusted_rows": trusted_rows,
+		"correct_trust_rows": correct_trust_rows,
+		"clean_rows": clean_rows,
+		"successful_recoveries": successful_recoveries,
+		"blockers_destroyed": blockers_destroyed,
+		"damage_taken": damage_taken,
+		"manual_time": manual_time,
+		"longest_correct_streak": longest_correct_streak,
+		"remaining_lives": player.lives,
+	}
 
 
 func _on_game_state_changed(state: GameManager.GameState) -> void:

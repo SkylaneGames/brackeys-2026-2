@@ -7,6 +7,7 @@ signal completed
 signal failed(reason: FailureReason)
 signal player_died
 signal run_result_changed(score: int, elapsed_time: float)
+signal run_mastery_changed(stats: Dictionary)
 
 @export var player_scene: PackedScene
 @onready var player_spawn: Marker2D = %PlayerSpawn

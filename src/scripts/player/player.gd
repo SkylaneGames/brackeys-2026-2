@@ -3,6 +3,8 @@ extends CharacterBody2D
 
 signal lives_changed(lives: int)
 signal died
+signal damage_taken
+signal weapon_heat_changed(heat: float, overheated: bool)
 
 @export_range(1, 10) var starting_lives := 3
 @export var move_speed := 300.0
@@ -13,6 +15,9 @@ signal died
 @export_range(0.0, 0.25) var movement_deadzone := 0.03
 @export var invulnerability_duration := 1.5
 @export var shot_cooldown := 0.28
+@export_range(0.05, 1.0) var heat_per_shot := 0.22
+@export_range(0.01, 1.0) var heat_cooldown_rate := 0.35
+@export_range(0.0, 0.95) var overheat_recovery_threshold := 0.35
 
 @export var explosion_template: PackedScene
 @export var projectile_scene: PackedScene
@@ -25,11 +30,14 @@ var navigation_enabled := true
 var navigation_speed_multiplier := 1.0
 var shot_cooldown_left := 0.0
 var is_correcting := false
+var weapon_heat := 0.0
+var weapon_overheated := false
 
 
 func _ready() -> void:
 	lives = starting_lives
 	lives_changed.emit(lives)
+	weapon_heat_changed.emit(weapon_heat, weapon_overheated)
 	if not anim_player.animation_finished.is_connected(_on_animation_finished):
 		anim_player.animation_finished.connect(_on_animation_finished)
 
@@ -37,6 +45,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_update_invulnerability(delta)
 	shot_cooldown_left = maxf(shot_cooldown_left - delta, 0.0)
+	_update_weapon_heat(delta)
 	if Input.is_action_pressed("shoot"):
 		_shoot()
 	var manual_direction := Input.get_axis("move_left", "move_right")
@@ -75,6 +84,7 @@ func take_hit() -> void:
 	lives -= 1
 	invulnerability_left = invulnerability_duration
 	lives_changed.emit(lives)
+	damage_taken.emit()
 	if explosion_template != null:
 		var explosion: Node = explosion_template.instantiate()
 		add_child(explosion)
@@ -91,12 +101,28 @@ func restore_life() -> bool:
 
 
 func _shoot() -> void:
-	if projectile_scene == null or shot_cooldown_left > 0.0:
+	if projectile_scene == null or shot_cooldown_left > 0.0 or weapon_overheated:
 		return
 	var projectile := projectile_scene.instantiate() as Node2D
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = global_position + Vector2(0.0, -34.0)
 	shot_cooldown_left = shot_cooldown
+	weapon_heat = minf(weapon_heat + heat_per_shot, 1.0)
+	if weapon_heat >= 1.0:
+		weapon_overheated = true
+	weapon_heat_changed.emit(weapon_heat, weapon_overheated)
+
+
+func _update_weapon_heat(delta: float) -> void:
+	if weapon_heat <= 0.0:
+		return
+	var previous_heat := weapon_heat
+	var was_overheated := weapon_overheated
+	weapon_heat = maxf(weapon_heat - heat_cooldown_rate * delta, 0.0)
+	if weapon_overheated and weapon_heat <= overheat_recovery_threshold:
+		weapon_overheated = false
+	if not is_equal_approx(previous_heat, weapon_heat) or was_overheated != weapon_overheated:
+		weapon_heat_changed.emit(weapon_heat, weapon_overheated)
 
 
 func _update_invulnerability(delta: float) -> void:

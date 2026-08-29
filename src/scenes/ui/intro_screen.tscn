@@ -2,6 +2,18 @@
 
 [ext_resource type="Script" uid="uid://ceyoin2s6v5dp" path="res://scripts/ui/intro_screen.gd" id="1"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_begin"]
+bg_color = Color(0.08, 0.3, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.39, 0.9, 1, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="IntroScreen" type="Control" unique_id=1025728286]
 layout_mode = 3
 anchors_preset = 15
@@ -83,130 +95,135 @@ mouse_filter = 2
 [node name="Title" type="Label" parent="Briefing" unique_id=1333753697]
 layout_mode = 0
 offset_left = 340.0
-offset_top = 85.0
+offset_top = 38.0
 offset_right = 940.0
-offset_bottom = 137.0
+offset_bottom = 90.0
 theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
 theme_override_font_sizes/font_size = 38
-text = "FLIGHT BRIEFING"
+text = "YOUR FIRST FLIGHT"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="Briefing" unique_id=1759646777]
 layout_mode = 0
 offset_left = 340.0
-offset_top = 139.0
+offset_top = 91.0
 offset_right = 940.0
-offset_bottom = 167.0
+offset_bottom = 121.0
 theme_override_colors/font_color = Color(0.5, 0.63, 0.78, 1)
 theme_override_font_sizes/font_size = 16
-text = "READ THE FIELD. COMMIT. RECOVER."
+text = "YOU BEGIN IN TRUST NO ONE — LEARN THE SHIP, THEN CHOOSE A GUIDE"
 horizontal_alignment = 1
-
-[node name="Divider1" type="ColorRect" parent="Briefing" unique_id=932661426]
-layout_mode = 0
-offset_left = 425.0
-offset_top = 185.0
-offset_right = 427.0
-offset_bottom = 470.0
-color = Color(0.22, 0.38, 0.56, 0.45)
-
-[node name="Divider2" type="ColorRect" parent="Briefing" unique_id=485663916]
-layout_mode = 0
-offset_left = 852.0
-offset_top = 185.0
-offset_right = 854.0
-offset_bottom = 470.0
-color = Color(0.22, 0.38, 0.56, 0.45)
 
 [node name="TrustTitle" type="Label" parent="Briefing" unique_id=301036830]
 layout_mode = 0
-offset_left = 50.0
-offset_top = 168.0
-offset_right = 405.0
-offset_bottom = 202.0
+offset_left = 70.0
+offset_top = 160.0
+offset_right = 600.0
+offset_bottom = 194.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "1  CHOOSE A SIGNAL"
+text = "1  FLY IT YOURSELF"
 horizontal_alignment = 1
 
 [node name="TrustCopy" type="Label" parent="Briefing" unique_id=393893858]
 layout_mode = 0
-offset_left = 50.0
-offset_top = 410.0
-offset_right = 405.0
-offset_bottom = 462.0
+offset_left = 75.0
+offset_top = 295.0
+offset_right = 595.0
+offset_bottom = 337.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Compare both routes.
-Trust can change at any time."
+text = "A / D or arrow keys steer.\nYou start unassisted."
 horizontal_alignment = 1
 
 [node name="CorrectTitle" type="Label" parent="Briefing" unique_id=280378752]
 layout_mode = 0
-offset_left = 447.0
-offset_top = 168.0
-offset_right = 832.0
-offset_bottom = 202.0
+offset_left = 680.0
+offset_top = 160.0
+offset_right = 1210.0
+offset_bottom = 194.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "2  OVERRIDE AT A COST"
+text = "2  CHOOSE A GUIDE"
 horizontal_alignment = 1
 
 [node name="CorrectCopy" type="Label" parent="Briefing" unique_id=445533157]
 layout_mode = 0
-offset_left = 447.0
-offset_top = 410.0
-offset_right = 832.0
-offset_bottom = 462.0
+offset_left = 685.0
+offset_top = 295.0
+offset_right = 1205.0
+offset_bottom = 337.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Correction pauses the AI.
-Your sensor view narrows."
+text = "Q trusts Alpha. E trusts Beta.\nTrust reveals routes and accelerates the run."
 horizontal_alignment = 1
 
 [node name="RecoverTitle" type="Label" parent="Briefing" unique_id=2100150605]
 layout_mode = 0
-offset_left = 874.0
-offset_top = 168.0
-offset_right = 1230.0
-offset_bottom = 202.0
+offset_left = 680.0
+offset_top = 385.0
+offset_right = 1210.0
+offset_bottom = 419.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "3  BREAK THROUGH"
+text = "4  BREAK THROUGH"
 horizontal_alignment = 1
 
 [node name="RecoverCopy" type="Label" parent="Briefing" unique_id=318258957]
 layout_mode = 0
-offset_left = 874.0
-offset_top = 410.0
-offset_right = 1230.0
-offset_bottom = 462.0
+offset_left = 685.0
+offset_top = 505.0
+offset_right = 1205.0
+offset_bottom = 550.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Shoot amber-marked rocks.
-Collect green repairs."
+text = "Shoot amber-marked rocks with SPACE.
+Sustained fire overheats. Collect green repairs."
+horizontal_alignment = 1
+
+[node name="DoubtTitle" type="Label" parent="Briefing"]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 385.0
+offset_right = 600.0
+offset_bottom = 419.0
+theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "3  TAKE BACK CONTROL"
+horizontal_alignment = 1
+
+[node name="DoubtCopy" type="Label" parent="Briefing"]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 505.0
+offset_right = 595.0
+offset_bottom = 550.0
+theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
+theme_override_font_sizes/font_size = 16
+text = "Steering manually clears trust.\nPress Q or E to reconnect."
 horizontal_alignment = 1
 
 [node name="BeginButton" type="Button" parent="Briefing" unique_id=1561836620]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 470.0
-offset_top = 550.0
-offset_right = 810.0
-offset_bottom = 618.0
+offset_left = 440.0
+offset_top = 588.0
+offset_right = 840.0
+offset_bottom = 652.0
 theme_override_colors/font_color = Color(0.91, 0.98, 1, 1)
 theme_override_font_sizes/font_size = 21
-text = "BEGIN RUN  [ENTER]"
+theme_override_styles/normal = SubResource("StyleBox_begin")
+text = "START IN TRUST NO ONE  [ENTER]"
 
 [node name="Hint" type="Label" parent="Briefing" unique_id=974784212]
 layout_mode = 0
 offset_left = 450.0
-offset_top = 634.0
+offset_top = 668.0
 offset_right = 830.0
-offset_bottom = 662.0
+offset_bottom = 698.0
 theme_override_colors/font_color = Color(0.4, 0.52, 0.66, 1)
 theme_override_font_sizes/font_size = 14
-text = "ESC pauses during flight"
+text = "One route is safer. The AIs exchange roles without warning."
 horizontal_alignment = 1
 
 [connection signal="pressed" from="SkipButton" to="." method="_on_skip_pressed"]

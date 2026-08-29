@@ -57,6 +57,20 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_heat_background"]
+bg_color = Color(0.04, 0.075, 0.14, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_heat_fill"]
+bg_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
 asteroid_scene = ExtResource("3")
@@ -98,7 +112,7 @@ layer = 2
 offset_left = 18.0
 offset_top = 18.0
 offset_right = 258.0
-offset_bottom = 96.0
+offset_bottom = 132.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_hud_neutral")
 
@@ -175,6 +189,27 @@ theme_override_colors/font_color = Color(0.55, 0.72, 0.88, 1)
 theme_override_font_sizes/font_size = 18
 text = "SCORE  000000"
 
+[node name="WeaponLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 28.0
+offset_top = 91.0
+offset_right = 238.0
+offset_bottom = 112.0
+theme_override_colors/font_color = Color(0.55, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "WEAPON  READY"
+
+[node name="WeaponHeat" type="ProgressBar" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 28.0
+offset_top = 115.0
+offset_right = 238.0
+offset_bottom = 124.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBox_heat_background")
+theme_override_styles/fill = SubResource("StyleBox_heat_fill")
+show_percentage = false
+
 [node name="AlphaTitle" type="Label" parent="HUD" unique_id=2062170239]
 offset_left = 112.0
 offset_top = 546.0
@@ -239,10 +274,11 @@ show_percentage = false
 
 [node name="DebugTrustButton" type="Button" parent="HUD" unique_id=1700945003]
 unique_name_in_owner = true
+visible = false
 offset_left = 18.0
-offset_top = 108.0
+offset_top = 140.0
 offset_right = 283.0
-offset_bottom = 144.0
+offset_bottom = 176.0
 theme_override_font_sizes/font_size = 14
 text = "DEBUG: REVEAL STEERING AI"
 

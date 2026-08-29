@@ -68,34 +68,49 @@ func _draw() -> void:
 
 
 func _draw_briefing_symbols() -> void:
-	# Trust: two spatially distinct plans, matching the in-game color language.
-	_draw_keycap(Vector2(110.0, 250.0), "Q", Color("63e6ff"))
-	_draw_route(PackedVector2Array([Vector2(165, 340), Vector2(205, 305), Vector2(185, 270), Vector2(240, 235)]), Color("63e6ff"))
-	_draw_keycap(Vector2(285.0, 250.0), "E", Color("ff6aa9"))
-	_draw_route(PackedVector2Array([Vector2(340, 340), Vector2(315, 305), Vector2(350, 270), Vector2(320, 235)]), Color("ff6aa9"))
+	_draw_briefing_card(Rect2(50.0, 145.0, 570.0, 205.0), Color("b7c7dd"))
+	_draw_briefing_card(Rect2(660.0, 145.0, 570.0, 205.0), Color("63e6ff"))
+	_draw_briefing_card(Rect2(50.0, 370.0, 570.0, 195.0), Color("f6d365"))
+	_draw_briefing_card(Rect2(660.0, 370.0, 570.0, 195.0), Color("73ffad"))
 
-	# Override: direct movement remains available while the sensor aperture shrinks.
-	var ship := Vector2(640.0, 305.0)
-	draw_circle(ship, 68.0, Color(0.12, 0.2, 0.36, 0.5))
-	draw_circle(ship, 36.0, Color("050817"))
+	# 1. Establish manual movement before introducing automation.
+	var ship := Vector2(335.0, 245.0)
 	draw_colored_polygon(PackedVector2Array([ship + Vector2(0, -22), ship + Vector2(-15, 18), ship, ship + Vector2(15, 18)]), Color("e8f5ff"))
-	_draw_keycap(Vector2(510.0, 285.0), "A", Color("b7c7dd"))
-	_draw_keycap(Vector2(735.0, 285.0), "D", Color("b7c7dd"))
-	draw_line(Vector2(570, 305), Vector2(535, 305), Color("b7c7dd"), 4.0)
-	draw_line(Vector2(710, 305), Vector2(745, 305), Color("b7c7dd"), 4.0)
+	_draw_keycap(Vector2(185.0, 223.0), "A", Color("b7c7dd"))
+	_draw_keycap(Vector2(437.0, 223.0), "D", Color("b7c7dd"))
+	draw_line(Vector2(280, 245), Vector2(245, 245), Color("b7c7dd"), 4.0)
+	draw_line(Vector2(390, 245), Vector2(425, 245), Color("b7c7dd"), 4.0)
 
-	# Recovery: the same amber reticle and green repair cross used during play.
-	var rock := Vector2(1010.0, 280.0)
+	# 2. Trust reveals the field route and hands steering to an AI.
+	_draw_keycap(Vector2(725.0, 222.0), "Q", Color("63e6ff"))
+	_draw_route(PackedVector2Array([Vector2(790, 285), Vector2(845, 255), Vector2(825, 220)]), Color("63e6ff"))
+	_draw_keycap(Vector2(1080.0, 222.0), "E", Color("ff6aa9"))
+	_draw_route(PackedVector2Array([Vector2(1065, 285), Vector2(1015, 250), Vector2(1040, 215)]), Color("ff6aa9"))
+
+	# 3. Manual correction deliberately breaks the current trust link.
+	_draw_keycap(Vector2(185.0, 435.0), "A", Color("f6d365"))
+	_draw_keycap(Vector2(437.0, 435.0), "D", Color("f6d365"))
+	var font := ThemeDB.fallback_font
+	draw_string(font, Vector2(273.0, 467.0), "TRUST NO ONE", HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("f6d365"))
+
+	# 4. The same amber target and green repair symbols used during play.
+	var rock := Vector2(815.0, 450.0)
 	for corner in 4:
 		var start := corner * PI * 0.5 + 0.2
 		draw_arc(rock, 42.0, start, start + 0.85, 10, Color("ffc747"), 4.0, true)
 	draw_circle(rock, 21.0, Color("39435a"))
-	draw_line(Vector2(1010, 380), Vector2(1010, 330), Color("8cf7ff"), 5.0)
-	_draw_keycap(Vector2(902.0, 355.0), "SPACE", Color("8cf7ff"), Vector2(112.0, 44.0))
-	var repair := Vector2(1130.0, 365.0)
+	draw_line(Vector2(815, 505), Vector2(815, 490), Color("8cf7ff"), 5.0)
+	_draw_keycap(Vector2(900.0, 428.0), "SPACE", Color("8cf7ff"), Vector2(112.0, 44.0))
+	var repair := Vector2(1110.0, 450.0)
 	draw_circle(repair, 24.0, Color(0.1, 0.35, 0.23, 0.75))
 	draw_line(repair + Vector2(-11, 0), repair + Vector2(11, 0), Color("73ffad"), 7.0)
 	draw_line(repair + Vector2(0, -11), repair + Vector2(0, 11), Color("73ffad"), 7.0)
+
+
+func _draw_briefing_card(rect: Rect2, accent: Color) -> void:
+	draw_rect(rect, Color(0.025, 0.055, 0.12, 0.88), true)
+	draw_line(rect.position + Vector2(0.0, 1.0), rect.position + Vector2(rect.size.x, 1.0), Color(accent, 0.8), 3.0)
+	draw_rect(rect, Color(accent, 0.32), false, 1.0)
 
 
 func _draw_route(points: PackedVector2Array, color: Color) -> void:
