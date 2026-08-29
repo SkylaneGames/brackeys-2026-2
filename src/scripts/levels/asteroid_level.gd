@@ -5,8 +5,8 @@ const RISKY_PATH_OFFSETS: Array[int] = [-1, 0, 1]
 const ADVICE_ARROWS: Array[String] = ["<<<", "<<", "<", "|", ">", ">>", ">>>"]
 
 @export var asteroid_scene: PackedScene
-@export_range(5, 7) var lane_count := 6
-@export_range(1.0, 1000.0) var asteroid_fall_speed := 115.0
+@export_range(5, 20) var lane_count := 10
+@export_range(1.0, 1000.0) var asteroid_fall_speed := 180.0
 @export_range(80.0, 400.0) var row_spacing := 150.0
 @export_range(3, 6) var rows_per_sector := 4
 @export_range(0.1, 3.0) var trust_handover_delay := 1.0
