@@ -109,7 +109,7 @@ offset_right = 840.0
 offset_bottom = 50.0
 theme_override_colors/font_color = Color(0.46, 0.62, 0.78, 1)
 theme_override_font_sizes/font_size = 15
-text = "FLIGHT DEBRIEF  //  TRUST VECTOR"
+text = "FLIGHT DEBRIEF"
 horizontal_alignment = 1
 
 [node name="OutcomeRule" type="ColorRect" parent="."]
@@ -128,18 +128,7 @@ offset_top = 69.0
 offset_right = 1040.0
 offset_bottom = 124.0
 theme_override_font_sizes/font_size = 46
-text = "CLEAR SPACE"
-horizontal_alignment = 1
-
-[node name="Summary" type="Label" parent="."]
-unique_name_in_owner = true
-offset_left = 240.0
-offset_top = 128.0
-offset_right = 1040.0
-offset_bottom = 154.0
-theme_override_colors/font_color = Color(0.62, 0.74, 0.88, 1)
-theme_override_font_sizes/font_size = 16
-text = "MISSION COMPLETE  //  CLEAR SPACE REACHED"
+text = "ESCAPE COMPLETE"
 horizontal_alignment = 1
 
 [node name="RunPanel" type="Panel" parent="."]
@@ -157,21 +146,11 @@ offset_right = 272.0
 offset_bottom = 47.0
 theme_override_colors/font_color = Color(0.68, 0.79, 0.92, 1)
 theme_override_font_sizes/font_size = 17
-text = "RUN RESULT"
-
-[node name="ResultStatus" type="Label" parent="RunPanel"]
-unique_name_in_owner = true
-offset_left = 24.0
-offset_top = 58.0
-offset_right = 272.0
-offset_bottom = 90.0
-theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "ESCAPED"
+text = "RUN"
 
 [node name="ScoreCaption" type="Label" parent="RunPanel"]
 offset_left = 24.0
-offset_top = 117.0
+offset_top = 82.0
 offset_right = 272.0
 offset_bottom = 140.0
 theme_override_colors/font_color = Color(0.42, 0.57, 0.73, 1)
@@ -181,7 +160,7 @@ text = "FINAL SCORE"
 [node name="ScoreValue" type="Label" parent="RunPanel"]
 unique_name_in_owner = true
 offset_left = 24.0
-offset_top = 140.0
+offset_top = 105.0
 offset_right = 272.0
 offset_bottom = 188.0
 theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
@@ -190,7 +169,7 @@ text = "000000"
 
 [node name="TimeCaption" type="Label" parent="RunPanel"]
 offset_left = 24.0
-offset_top = 218.0
+offset_top = 205.0
 offset_right = 272.0
 offset_bottom = 241.0
 theme_override_colors/font_color = Color(0.42, 0.57, 0.73, 1)
@@ -200,7 +179,7 @@ text = "FLIGHT TIME"
 [node name="TimeValue" type="Label" parent="RunPanel"]
 unique_name_in_owner = true
 offset_left = 24.0
-offset_top = 244.0
+offset_top = 231.0
 offset_right = 272.0
 offset_bottom = 290.0
 theme_override_colors/font_color = Color(0.72, 0.86, 1, 1)
@@ -262,7 +241,7 @@ offset_right = 514.0
 offset_bottom = 198.0
 theme_override_colors/font_color = Color(0.45, 0.65, 0.78, 1)
 theme_override_font_sizes/font_size = 14
-text = "NO ROWS COMMITTED"
+text = "NO ROUTES CHOSEN"
 
 [node name="Divider" type="ColorRect" parent="NavPanel"]
 offset_left = 26.0
@@ -298,7 +277,7 @@ offset_right = 514.0
 offset_bottom = 260.0
 theme_override_colors/font_color = Color(0.48, 0.65, 0.8, 1)
 theme_override_font_sizes/font_size = 14
-text = "BEST READ STREAK"
+text = "BEST STREAK"
 
 [node name="BestStreakValue" type="Label" parent="NavPanel"]
 unique_name_in_owner = true
@@ -352,6 +331,7 @@ theme_override_styles/pressed = SubResource("StyleBox_primary_hover")
 text = "FLY AGAIN"
 
 [node name="TitleButton" type="Button" parent="."]
+unique_name_in_owner = true
 offset_left = 648.0
 offset_top = 548.0
 offset_right = 876.0
@@ -371,8 +351,19 @@ offset_right = 890.0
 offset_bottom = 653.0
 theme_override_colors/font_color = Color(0.35, 0.48, 0.64, 1)
 theme_override_font_sizes/font_size = 14
-text = "Review the read. Adjust the response. Fly again."
+text = "Do we trust we can fly again?"
 horizontal_alignment = 1
+
+[node name="TransitionVeil" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.0196078, 0.0313726, 0.0745098, 1)
 
 [connection signal="pressed" from="Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="TitleButton" to="." method="_on_title_pressed"]

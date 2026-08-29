@@ -51,19 +51,13 @@ modulate = Color(0.97, 0.79, 0.31, 1)
 outline_modulate = Color(0, 0, 0, 0.9)
 text = "OUTER REACH // CYCLE 4097
 
-The last human convoy enters an uncharted asteroid storm. The asteroid field, regrettably, has declined to queue.
+The last human convoy has entered an uncharted asteroid storm. Mission Control calls the situation ‘fluid’, chiefly because ‘doomed’ is bad for morale.
 
-Its pilot cannot see far enough to navigate alone. Mission Control has described the situation as less than ideal, which is rarely encouraging.
+The pilot cannot see far enough to navigate at speed. Two navigation intelligences, ALPHA and BETA, offer a way through. One intends to save the ship, the other intends to save time. Both consider the distinction rather petty.
 
-Two navigation intelligences awaken: ALPHA and BETA. Each offers a path through the dark. One protects the ship. One accepts the risk. Both insist they are helping. Neither has provided references.
+Their loyalties may change so be careful to read the routes and choose whom to trust. Take control when trust becomes educational.
 
-Their loyalties will change. Their voices will not.
-
-Read the routes. Choose who to trust. Take control when trust is not enough.
-
-
-
-Do try to keep the ship in one piece. The paperwork is formidable."
+Do try to keep the ship intact... the paperwork is formidable."
 outline_size = 8
 vertical_alignment = 0
 line_spacing = 14.0
@@ -100,7 +94,7 @@ offset_right = 940.0
 offset_bottom = 90.0
 theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
 theme_override_font_sizes/font_size = 38
-text = "YOUR FIRST FLIGHT"
+text = "FLIGHT CONTROLS"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="Briefing" unique_id=1759646777]
@@ -118,29 +112,29 @@ horizontal_alignment = 1
 layout_mode = 0
 offset_left = 70.0
 offset_top = 160.0
-offset_right = 600.0
+offset_right = 410.0
 offset_bottom = 194.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "1  FLY IT YOURSELF"
+text = "1  FLY MANUALLY"
 horizontal_alignment = 1
 
 [node name="TrustCopy" type="Label" parent="Briefing" unique_id=393893858]
 layout_mode = 0
 offset_left = 75.0
-offset_top = 295.0
-offset_right = 595.0
-offset_bottom = 337.0
+offset_top = 455.0
+offset_right = 405.0
+offset_bottom = 507.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "A / D or arrow keys steer.\nYou start unassisted."
+text = "You start with manual control, trusting no one.\nA / D or arrow keys steer."
 horizontal_alignment = 1
 
 [node name="CorrectTitle" type="Label" parent="Briefing" unique_id=280378752]
 layout_mode = 0
-offset_left = 680.0
+offset_left = 470.0
 offset_top = 160.0
-offset_right = 1210.0
+offset_right = 810.0
 offset_bottom = 194.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
@@ -149,58 +143,36 @@ horizontal_alignment = 1
 
 [node name="CorrectCopy" type="Label" parent="Briefing" unique_id=445533157]
 layout_mode = 0
-offset_left = 685.0
-offset_top = 295.0
-offset_right = 1205.0
-offset_bottom = 337.0
+offset_left = 475.0
+offset_top = 455.0
+offset_right = 805.0
+offset_bottom = 507.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Q trusts Alpha. E trusts Beta.\nTrust reveals routes and accelerates the run."
+text = "Q trusts Alpha. E trusts Beta.\nTrust reveals routes and accelerates the ship."
 horizontal_alignment = 1
 
 [node name="RecoverTitle" type="Label" parent="Briefing" unique_id=2100150605]
 layout_mode = 0
-offset_left = 680.0
-offset_top = 385.0
+offset_left = 870.0
+offset_top = 160.0
 offset_right = 1210.0
-offset_bottom = 419.0
+offset_bottom = 194.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "4  BREAK THROUGH"
+text = "3  SHOOT & REPAIR"
 horizontal_alignment = 1
 
 [node name="RecoverCopy" type="Label" parent="Briefing" unique_id=318258957]
 layout_mode = 0
-offset_left = 685.0
-offset_top = 505.0
+offset_left = 875.0
+offset_top = 455.0
 offset_right = 1205.0
-offset_bottom = 550.0
+offset_bottom = 507.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Shoot amber-marked rocks with SPACE.
-Sustained fire overheats. Collect green repairs."
-horizontal_alignment = 1
-
-[node name="DoubtTitle" type="Label" parent="Briefing"]
-layout_mode = 0
-offset_left = 70.0
-offset_top = 385.0
-offset_right = 600.0
-offset_bottom = 419.0
-theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "3  TAKE BACK CONTROL"
-horizontal_alignment = 1
-
-[node name="DoubtCopy" type="Label" parent="Briefing"]
-layout_mode = 0
-offset_left = 75.0
-offset_top = 505.0
-offset_right = 595.0
-offset_bottom = 550.0
-theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
-theme_override_font_sizes/font_size = 16
-text = "Steering manually clears trust.\nPress Q or E to reconnect."
+text = "SPACE shoots amber targets.
+Let the weapon cool. Green pickups repair."
 horizontal_alignment = 1
 
 [node name="BeginButton" type="Button" parent="Briefing" unique_id=1561836620]
@@ -213,18 +185,7 @@ offset_bottom = 652.0
 theme_override_colors/font_color = Color(0.91, 0.98, 1, 1)
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleBox_begin")
-text = "START IN TRUST NO ONE  [ENTER]"
-
-[node name="Hint" type="Label" parent="Briefing" unique_id=974784212]
-layout_mode = 0
-offset_left = 450.0
-offset_top = 668.0
-offset_right = 830.0
-offset_bottom = 698.0
-theme_override_colors/font_color = Color(0.4, 0.52, 0.66, 1)
-theme_override_font_sizes/font_size = 14
-text = "One route is safer. The AIs exchange roles without warning."
-horizontal_alignment = 1
+text = "BEGIN RUN  [ENTER]"
 
 [connection signal="pressed" from="SkipButton" to="." method="_on_skip_pressed"]
 [connection signal="pressed" from="Briefing/BeginButton" to="." method="_on_begin_pressed"]

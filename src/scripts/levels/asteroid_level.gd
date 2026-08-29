@@ -453,7 +453,7 @@ func _update_trust_display() -> void:
 			trust_label.text = "TRUST NO ONE"
 			trust_label.modulate = Color("b7c7dd")
 	elif trust_handover_left > 0.0:
-		trust_label.text = "LINKING %s  %.1f" % ["ALPHA" if pending_trusted_ai == TrustedAi.ALPHA else "BETA", trust_handover_left]
+		trust_label.text = "TRUSTING %s  %.1f" % ["ALPHA" if pending_trusted_ai == TrustedAi.ALPHA else "BETA", trust_handover_left]
 		trust_label.modulate = Color("f6d365")
 	else:
 		trust_label.text = "TRUST: %s" % ("ALPHA" if trusted_ai == TrustedAi.ALPHA else "BETA")

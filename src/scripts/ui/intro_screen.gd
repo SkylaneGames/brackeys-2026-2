@@ -68,40 +68,33 @@ func _draw() -> void:
 
 
 func _draw_briefing_symbols() -> void:
-	_draw_briefing_card(Rect2(50.0, 145.0, 570.0, 205.0), Color("b7c7dd"))
-	_draw_briefing_card(Rect2(660.0, 145.0, 570.0, 205.0), Color("63e6ff"))
-	_draw_briefing_card(Rect2(50.0, 370.0, 570.0, 195.0), Color("f6d365"))
-	_draw_briefing_card(Rect2(660.0, 370.0, 570.0, 195.0), Color("73ffad"))
+	_draw_briefing_card(Rect2(45.0, 145.0, 370.0, 390.0), Color("b7c7dd"))
+	_draw_briefing_card(Rect2(455.0, 145.0, 370.0, 390.0), Color("63e6ff"))
+	_draw_briefing_card(Rect2(865.0, 145.0, 370.0, 390.0), Color("73ffad"))
 
-	# 1. Establish manual movement before introducing automation.
-	var ship := Vector2(335.0, 245.0)
+	# 1. Manual movement is shown once; the next card explains its trust consequence.
+	var ship := Vector2(230.0, 310.0)
 	draw_colored_polygon(PackedVector2Array([ship + Vector2(0, -22), ship + Vector2(-15, 18), ship, ship + Vector2(15, 18)]), Color("e8f5ff"))
-	_draw_keycap(Vector2(185.0, 223.0), "A", Color("b7c7dd"))
-	_draw_keycap(Vector2(437.0, 223.0), "D", Color("b7c7dd"))
-	draw_line(Vector2(280, 245), Vector2(245, 245), Color("b7c7dd"), 4.0)
-	draw_line(Vector2(390, 245), Vector2(425, 245), Color("b7c7dd"), 4.0)
+	_draw_keycap(Vector2(95.0, 288.0), "A", Color("b7c7dd"))
+	_draw_keycap(Vector2(317.0, 288.0), "D", Color("b7c7dd"))
+	draw_line(Vector2(190, 310), Vector2(155, 310), Color("b7c7dd"), 4.0)
+	draw_line(Vector2(270, 310), Vector2(305, 310), Color("b7c7dd"), 4.0)
 
-	# 2. Trust reveals the field route and hands steering to an AI.
-	_draw_keycap(Vector2(725.0, 222.0), "Q", Color("63e6ff"))
-	_draw_route(PackedVector2Array([Vector2(790, 285), Vector2(845, 255), Vector2(825, 220)]), Color("63e6ff"))
-	_draw_keycap(Vector2(1080.0, 222.0), "E", Color("ff6aa9"))
-	_draw_route(PackedVector2Array([Vector2(1065, 285), Vector2(1015, 250), Vector2(1040, 215)]), Color("ff6aa9"))
+	# 2. Either guide reveals a route; manual steering disconnects it.
+	_draw_keycap(Vector2(490.0, 215.0), "Q", Color("63e6ff"))
+	_draw_route(PackedVector2Array([Vector2(555, 390), Vector2(595, 330), Vector2(575, 270)]), Color("63e6ff"))
+	_draw_keycap(Vector2(737.0, 215.0), "E", Color("ff6aa9"))
+	_draw_route(PackedVector2Array([Vector2(715, 390), Vector2(675, 330), Vector2(695, 270)]), Color("ff6aa9"))
 
-	# 3. Manual correction deliberately breaks the current trust link.
-	_draw_keycap(Vector2(185.0, 435.0), "A", Color("f6d365"))
-	_draw_keycap(Vector2(437.0, 435.0), "D", Color("f6d365"))
-	var font := ThemeDB.fallback_font
-	draw_string(font, Vector2(273.0, 467.0), "TRUST NO ONE", HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("f6d365"))
-
-	# 4. The same amber target and green repair symbols used during play.
-	var rock := Vector2(815.0, 450.0)
+	# 3. The same amber target and green repair symbols used during play.
+	var rock := Vector2(945.0, 310.0)
 	for corner in 4:
 		var start := corner * PI * 0.5 + 0.2
 		draw_arc(rock, 42.0, start, start + 0.85, 10, Color("ffc747"), 4.0, true)
 	draw_circle(rock, 21.0, Color("39435a"))
-	draw_line(Vector2(815, 505), Vector2(815, 490), Color("8cf7ff"), 5.0)
-	_draw_keycap(Vector2(900.0, 428.0), "SPACE", Color("8cf7ff"), Vector2(112.0, 44.0))
-	var repair := Vector2(1110.0, 450.0)
+	draw_line(Vector2(945, 375), Vector2(945, 360), Color("8cf7ff"), 5.0)
+	_draw_keycap(Vector2(1000.0, 288.0), "SPACE", Color("8cf7ff"), Vector2(112.0, 44.0))
+	var repair := Vector2(1175.0, 310.0)
 	draw_circle(repair, 24.0, Color(0.1, 0.35, 0.23, 0.75))
 	draw_line(repair + Vector2(-11, 0), repair + Vector2(11, 0), Color("73ffad"), 7.0)
 	draw_line(repair + Vector2(0, -11), repair + Vector2(0, 11), Color("73ffad"), 7.0)

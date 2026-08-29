@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://le81vgnolpcw"]
+[gd_scene format=3 uid="uid://le81vgnolpcw"]
 
-[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1"]
+[ext_resource type="Script" uid="uid://dsxbpanocgowq" path="res://scripts/ui/title_screen.gd" id="1"]
 
 [node name="TitleScreen" type="Control" unique_id=968941271]
 layout_mode = 3
@@ -36,18 +36,6 @@ theme_override_constants/separation = 24
 layout_mode = 2
 theme_override_font_sizes/font_size = 52
 text = "TRUST VECTOR"
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="Center/Menu" unique_id=1300287950]
-layout_mode = 2
-text = "One guide tells the truth. One leads into danger."
-horizontal_alignment = 1
-
-[node name="Instructions" type="Label" parent="Center/Menu"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.58, 0.72, 0.9, 1)
-theme_override_font_sizes/font_size = 18
-text = "Follow the vectors. Learn who lies. Notice when that changes."
 horizontal_alignment = 1
 
 [node name="Start" type="Button" parent="Center/Menu" unique_id=1582538199]
