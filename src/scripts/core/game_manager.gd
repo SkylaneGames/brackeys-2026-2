@@ -15,6 +15,7 @@ var current_level_index := 0
 var last_failure_reason := FailureReason.PLAYER_DIED
 var final_score := 0
 var final_time := 0.0
+var run_escaped := false
 
 
 func _ready() -> void:
@@ -31,6 +32,7 @@ func start_run() -> void:
 	current_level_index = 0
 	final_score = 0
 	final_time = 0.0
+	run_escaped = false
 	get_tree().paused = false
 	_set_state(GameState.PLAYING)
 	_change_scene(LEVEL_SCENES[current_level_index])
@@ -67,20 +69,18 @@ func return_to_title() -> void:
 
 
 func _on_level_completed() -> void:
-	current_level_index += 1
-	if current_level_index < LEVEL_SCENES.size():
-		_change_scene(LEVEL_SCENES[current_level_index])
-	else:
-		# The current game is endless. This branch is retained for future finite levels.
-		return_to_title()
+	run_escaped = true
+	_show_game_over()
 
 
 func _on_level_failed(reason: Level.FailureReason) -> void:
+	run_escaped = false
 	last_failure_reason = FailureReason.LEVEL_FAILED
 	_show_game_over()
 
 
 func _on_player_died() -> void:
+	run_escaped = false
 	last_failure_reason = FailureReason.PLAYER_DIED
 	_show_game_over()
 
