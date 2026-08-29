@@ -3,11 +3,17 @@
 [ext_resource type="Script" uid="uid://xnnmojxqbril" path="res://scripts/levels/asteroid_level.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://4tafg0sl2ysx" path="res://scenes/player/player.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://co1ifmdmpkc6m" path="res://scenes/asteroids/asteroid.tscn" id="3"]
+[ext_resource type="Shader" path="res://shaders/sensor_fog.gdshader" id="4_fog"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fog"]
+shader = ExtResource("4_fog")
 
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
 asteroid_scene = ExtResource("3")
-row_spacing = 200.0
+asteroid_fall_speed = 115.0
+row_spacing = 230.0
+maximum_fall_speed = 220.0
 player_scene = ExtResource("2")
 
 [node name="Background" type="ColorRect" parent="." unique_id=713196841]
@@ -25,34 +31,125 @@ position = Vector2(640, 600)
 [node name="AsteroidSpawnTimer" type="Timer" parent="." unique_id=1113731076]
 unique_name_in_owner = true
 
-[node name="Placeholder" type="Label" parent="." unique_id=2041245781]
-offset_left = 963.0
-offset_top = 24.0
-offset_right = 1270.0
-offset_bottom = 94.0
-theme_override_colors/font_color = Color(0.5, 0.65, 0.85, 1)
-theme_override_font_sizes/font_size = 22
-text = "WHO DO YOU TRUST?
-Move with A/D or Left/Right"
-horizontal_alignment = 1
+[node name="FogLayer" type="CanvasLayer" parent="."]
+layer = 1
+
+[node name="FogField" type="ColorRect" parent="FogLayer"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_fog")
+offset_right = 1280.0
+offset_top = 108.0
+offset_bottom = 720.0
+mouse_filter = 2
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1844752192]
+layer = 2
+
+[node name="TopShade" type="ColorRect" parent="HUD"]
+offset_right = 1280.0
+offset_bottom = 108.0
+mouse_filter = 2
+color = Color(0.02, 0.035, 0.09, 0.94)
+
+[node name="Divider" type="ColorRect" parent="HUD"]
+offset_top = 104.0
+offset_right = 1280.0
+offset_bottom = 108.0
+mouse_filter = 2
+color = Color(0.2, 0.7, 0.9, 0.75)
 
 [node name="LivesLabel" type="Label" parent="HUD" unique_id=482107304]
 unique_name_in_owner = true
 offset_left = 28.0
-offset_top = 24.0
-offset_right = 200.0
-offset_bottom = 64.0
-theme_override_font_sizes/font_size = 24
+offset_top = 20.0
+offset_right = 218.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 22
 text = "LIVES: 3"
 
-[node name="DebugHit" type="Button" parent="HUD" unique_id=1919477177]
+[node name="ScoreLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
 offset_left = 28.0
-offset_top = 76.0
-offset_right = 190.0
-offset_bottom = 118.0
-text = "DEBUG: TAKE HIT"
+offset_top = 58.0
+offset_right = 230.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(0.55, 0.72, 0.88, 1)
+theme_override_font_sizes/font_size = 18
+text = "SCORE  000000"
+
+[node name="AlphaTitle" type="Label" parent="HUD"]
+offset_left = 300.0
+offset_top = 12.0
+offset_right = 500.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(0.39, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "ALPHA  [Q]"
+horizontal_alignment = 1
+
+[node name="AlphaAdvice" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 300.0
+offset_top = 38.0
+offset_right = 500.0
+offset_bottom = 90.0
+theme_override_colors/font_color = Color(0.78, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "|"
+horizontal_alignment = 1
+
+[node name="TrustLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 500.0
+offset_top = 22.0
+offset_right = 780.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 26
+text = "TRUST: ALPHA"
+horizontal_alignment = 1
+
+[node name="Controls" type="Label" parent="HUD"]
+offset_left = 500.0
+offset_top = 66.0
+offset_right = 780.0
+offset_bottom = 91.0
+theme_override_colors/font_color = Color(0.48, 0.58, 0.72, 1)
+theme_override_font_sizes/font_size = 14
+text = "CORRECT  A / D     PAUSE  ESC"
+horizontal_alignment = 1
+
+[node name="BetaTitle" type="Label" parent="HUD"]
+offset_left = 780.0
+offset_top = 12.0
+offset_right = 980.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(1, 0.42, 0.66, 1)
+theme_override_font_sizes/font_size = 18
+text = "BETA  [E]"
+horizontal_alignment = 1
+
+[node name="BetaAdvice" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 780.0
+offset_top = 38.0
+offset_right = 980.0
+offset_bottom = 90.0
+theme_override_colors/font_color = Color(1, 0.78, 0.88, 1)
+theme_override_font_sizes/font_size = 22
+text = "|"
+horizontal_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 1040.0
+offset_top = 32.0
+offset_right = 1252.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "TIME  00:00"
+horizontal_alignment = 2
 
 [node name="PauseMenu" type="Control" parent="HUD" unique_id=1460851952]
 unique_name_in_owner = true
@@ -107,7 +204,6 @@ custom_minimum_size = Vector2(280, 52)
 layout_mode = 2
 text = "EXIT TO TITLE"
 
-[connection signal="pressed" from="HUD/DebugHit" to="." method="_on_debug_hit_pressed"]
 [connection signal="pressed" from="HUD/PauseMenu/Center/Menu/Resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="HUD/PauseMenu/Center/Menu/Restart" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="HUD/PauseMenu/Center/Menu/Exit" to="." method="_on_exit_pressed"]

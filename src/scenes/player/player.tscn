@@ -38,8 +38,6 @@ animations = [{
 
 [node name="Player" type="CharacterBody2D" unique_id=249397979]
 script = ExtResource("1")
-starting_lives = null
-move_speed = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1342632573]
 shape = SubResource("CapsuleShape2D_player")

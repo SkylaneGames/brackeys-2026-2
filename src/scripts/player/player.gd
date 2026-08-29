@@ -5,11 +5,15 @@ signal lives_changed(lives: int)
 signal died
 
 @export_range(1, 10) var starting_lives := 3
-@export var move_speed := 420.0
+@export var move_speed := 300.0
+@export_range(0.0, 1.0) var navigation_influence := 0.68
+@export_range(0.0, 1.0) var manual_correction_influence := 0.78
+@export var navigation_response_distance := 120.0
 @export var invulnerability_duration := 1.5
 
 var lives: int
 var invulnerability_left := 0.0
+var navigation_target_x := 640.0
 
 
 func _ready() -> void:
@@ -19,10 +23,25 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_invulnerability(delta)
-	var direction := Input.get_axis("move_left", "move_right")
+	var manual_direction := Input.get_axis("move_left", "move_right")
+	var navigation_direction := clampf(
+		(navigation_target_x - global_position.x) / navigation_response_distance,
+		-1.0,
+		1.0
+	)
+	var direction := clampf(
+		navigation_direction * navigation_influence
+			+ manual_direction * manual_correction_influence,
+		-1.0,
+		1.0
+	)
 	velocity = Vector2(direction * move_speed, 0.0)
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 32.0, 1248.0)
+
+
+func set_navigation_target_x(target_x: float) -> void:
+	navigation_target_x = clampf(target_x, 32.0, 1248.0)
 
 
 func take_hit() -> void:

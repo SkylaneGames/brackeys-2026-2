@@ -12,6 +12,8 @@ const LEVEL_SCENES: Array[String] = ["res://scenes/levels/asteroid_level.tscn"]
 var state: GameState = GameState.TITLE
 var current_level_index := 0
 var last_failure_reason := FailureReason.PLAYER_DIED
+var final_score := 0
+var final_time := 0.0
 
 
 func _ready() -> void:
@@ -26,6 +28,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func start_run() -> void:
 	current_level_index = 0
+	final_score = 0
+	final_time = 0.0
 	get_tree().paused = false
 	_set_state(GameState.PLAYING)
 	_change_scene(LEVEL_SCENES[current_level_index])
@@ -39,6 +43,7 @@ func register_level(level: Level) -> void:
 	level.completed.connect(_on_level_completed)
 	level.failed.connect(_on_level_failed)
 	level.player_died.connect(_on_player_died)
+	level.run_result_changed.connect(_on_run_result_changed)
 
 
 func set_paused(paused: bool) -> void:
@@ -71,6 +76,11 @@ func _on_level_failed(reason: Level.FailureReason) -> void:
 func _on_player_died() -> void:
 	last_failure_reason = FailureReason.PLAYER_DIED
 	_show_game_over()
+
+
+func _on_run_result_changed(score: int, elapsed_time: float) -> void:
+	final_score = score
+	final_time = elapsed_time
 
 
 func _show_game_over() -> void:

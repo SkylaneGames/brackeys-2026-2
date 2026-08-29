@@ -38,6 +38,15 @@ theme_override_font_sizes/font_size = 48
 text = "RUN OVER"
 horizontal_alignment = 1
 
+[node name="ResultLabel" type="Label" parent="Center/Menu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "SCORE  000000
+TIME  00:00"
+horizontal_alignment = 1
+
 [node name="Retry" type="Button" parent="Center/Menu"]
 custom_minimum_size = Vector2(300, 56)
 layout_mode = 2

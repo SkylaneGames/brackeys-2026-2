@@ -43,6 +43,13 @@ layout_mode = 2
 text = "One guide tells the truth. One leads into danger."
 horizontal_alignment = 1
 
+[node name="Instructions" type="Label" parent="Center/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.72, 0.9, 1)
+theme_override_font_sizes/font_size = 18
+text = "Follow the vectors. Learn who lies. Notice when that changes.\n\nSTEER  A / D  or  ← / →     TRUST  Q / E     PAUSE  ESC"
+horizontal_alignment = 1
+
 [node name="Start" type="Button" parent="Center/Menu" unique_id=1582538199]
 custom_minimum_size = Vector2(320, 64)
 layout_mode = 2
