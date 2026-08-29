@@ -7,6 +7,9 @@ extends Area2D
 	preload("res://assets/sprites/asteroid_1.png"),
 	preload("res://assets/sprites/asteroid_2.png"),
 	preload("res://assets/sprites/asteroid_3.png"),
+	preload("res://assets/sprites/asteroid_4.png"),
+	preload("res://assets/sprites/asteroid_5.png"),
+	preload("res://assets/sprites/asteroid_6.png"),
 ]
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
