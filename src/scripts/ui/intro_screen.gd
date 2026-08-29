@@ -1,9 +1,11 @@
 extends Control
 
-const CRAWL_DURATION := 26.0
+const CRAWL_DURATION := 30.0
+const CRAWL_START_POS := Vector3(0.0, -1.2, 0.8)
+const CRAWL_END_POS := Vector3(0.0, 4.2, -7.2)
 
 @onready var crawl_layer: Control = %CrawlLayer
-@onready var crawl_text: Label = %CrawlText
+@onready var crawl_text: Label3D = %CrawlText
 @onready var briefing: Control = %Briefing
 @onready var skip_button: Button = %SkipButton
 @onready var begin_button: Button = %BeginButton
@@ -35,10 +37,7 @@ func _process(delta: float) -> void:
 		return
 	crawl_elapsed += delta
 	var progress := clampf(crawl_elapsed / CRAWL_DURATION, 0.0, 1.0)
-	# Strong scale reduction makes the copy recede into the starfield as it rises.
-	crawl_text.position.y = lerpf(750.0, -760.0, progress)
-	var crawl_scale := lerpf(1.34, 0.55, progress)
-	crawl_text.scale = Vector2.ONE * crawl_scale
+	crawl_text.position = CRAWL_START_POS.lerp(CRAWL_END_POS, progress)
 	crawl_text.modulate.a = 1.0 - smoothstep(0.88, 1.0, progress)
 	if progress >= 1.0:
 		_show_briefing()
