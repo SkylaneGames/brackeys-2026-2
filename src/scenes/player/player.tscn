@@ -6,8 +6,8 @@
 [ext_resource type="AudioStream" uid="uid://dt245baw0oj0l" path="res://assets/sounds/the-quiet-noise-of-a-spaceship-flying-in-the-distance.mp3" id="3_gmlin"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
-radius = 11.0
-height = 24.0
+radius = 21.0
+height = 50.0
 
 [node name="Player" type="CharacterBody2D" unique_id=249397979]
 script = ExtResource("1")
@@ -17,6 +17,7 @@ explosion_template = ExtResource("2_lvxji")
 shape = SubResource("CapsuleShape2D_player")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1984712115]
+scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_gmlin")
 autoplay = "default"
 
