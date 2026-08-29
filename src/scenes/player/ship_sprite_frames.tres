@@ -76,7 +76,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"default",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -88,9 +88,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_j4irh")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"roll_left",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -102,9 +102,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_macfd")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"roll_right",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -118,7 +118,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"side_left",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -132,5 +132,5 @@ animations = [{
 }],
 "loop": 1,
 "name": &"side_right",
-"speed": 5.0
+"speed": 10.0
 }]
