@@ -1,19 +1,13 @@
 extends Level
 
 const ROW_CLEARANCE_DISTANCE := 70.0
-const NORMAL_REVEAL_RADIUS := 0.19
-const NORMAL_EDGE_FEATHER := 0.095
-const CORRECTION_REVEAL_RADIUS := 0.115
-const CORRECTION_EDGE_FEATHER := 0.055
-const UNTRUSTED_REVEAL_RADIUS := 0.16
-const UNTRUSTED_EDGE_FEATHER := 0.075
 
 enum TrustedAi { NONE, ALPHA, BETA }
 
 @export var asteroid_scene: PackedScene
 @export var repair_pickup_scene: PackedScene
 @export_range(5, 20) var lane_count := 8
-@export_range(1.0, 1000.0) var asteroid_fall_speed := 240.0
+@export_range(1.0, 1000.0) var asteroid_fall_speed := 280.0
 @export_range(80.0, 400.0) var row_spacing := 150.0
 @export_range(3, 6) var rows_per_sector := 4
 @export_range(0.0, 3.0) var trust_handover_delay := 0.25
@@ -23,25 +17,23 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @export_range(0.3, 1.0) var risky_asteroid_scale := 0.7
 @export_range(0.0, 1.0) var two_lane_move_chance := 0.0
 @export_range(0.0, 1.0) var repair_sector_chance := 0.5
-@export_range(1.0, 4.0) var trusted_game_speed_multiplier := 1.5
-@export var speed_transition_rate := 200.0
+@export_range(1.0, 4.0) var trusted_game_speed_multiplier := 1.65
+@export var speed_transition_rate := 260.0
 @export var escape_distance := 15000.0
 @export var escape_time_limit := 60.0
-@export var role_swap_interval := 15.0
-@export var minimum_role_swap_interval := 8.0
-@export var maximum_fall_speed := 400.0
+@export var role_swap_interval := 9.0
+@export var minimum_role_swap_interval := 5.0
+@export var maximum_fall_speed := 450.0
 
 @onready var lives_label: Label = %LivesLabel
 @onready var pause_menu: Control = %PauseMenu
 @onready var spawn_timer: Timer = %AsteroidSpawnTimer
 @onready var asteroids: Node2D = $Asteroids
-@onready var alpha_route_preview = %AlphaRoutePreview
-@onready var beta_route_preview = %BetaRoutePreview
+@onready var world_route_overlay: Node2D = %WorldRouteOverlay
 @onready var trust_label: Label = %TrustLabel
 @onready var score_label: Label = %ScoreLabel
 @onready var time_label: Label = %TimeLabel
 @onready var escape_progress: ProgressBar = %EscapeProgress
-@onready var fog_field: ColorRect = %FogField
 @onready var debug_trust_button: Button = %DebugTrustButton
 @onready var alpha_ai: NavAi = %AlphaAI
 @onready var beta_ai: NavAi = %BetaAI
@@ -57,7 +49,6 @@ var role_swap_left := 0.0
 var current_fall_speed := 0.0
 var sector_happy_is_alpha := true
 var debug_trust_revealed := false
-var correction_fog_blend := 0.0
 var distance_remaining := 0.0
 var run_finished := false
 var displayed_manual_state := false
@@ -105,7 +96,6 @@ func _process(delta: float) -> void:
 		alpha_is_honest = not alpha_is_honest
 		role_swap_left = _next_role_swap_interval()
 	_update_trust_handover(delta)
-	_update_correction_visibility(delta)
 	if displayed_manual_state != player.is_correcting:
 		displayed_manual_state = player.is_correcting
 		if player.is_correcting:
@@ -184,8 +174,8 @@ func _generate_sector() -> void:
 		# two lanes. Keep the assertion close to generation so this guarantee cannot
 		# silently regress as procedural variation is added.
 		assert(absi(happy_lane - previous_happy_lane) <= 2)
-		risky_lane = _choose_adjacent_risky_lane(happy_lane, risky_lane)
-		assert(absi(risky_lane - happy_lane) == 1)
+		risky_lane = _choose_nearby_risky_lane(happy_lane, risky_lane)
+		assert(absi(risky_lane - happy_lane) in [1, 2])
 		happy_plan.append(happy_lane)
 		risky_plan.append(risky_lane)
 		# Repair rows make both choices safe; the better read earns recovery.
@@ -202,12 +192,12 @@ func _generate_sector() -> void:
 	_update_advice()
 
 
-func _choose_adjacent_risky_lane(happy_lane: int, previous_risky_lane: int) -> int:
+func _choose_nearby_risky_lane(happy_lane: int, previous_risky_lane: int) -> int:
 	var options: Array[int] = []
-	if happy_lane > 0:
-		options.append(happy_lane - 1)
-	if happy_lane < lane_count - 1:
-		options.append(happy_lane + 1)
+	for offset in [-2, -1, 1, 2]:
+		var candidate: int = happy_lane + int(offset)
+		if candidate >= 0 and candidate < lane_count:
+			options.append(candidate)
 	assert(not options.is_empty())
 	options.shuffle()
 	var chosen_lane := options[0]
@@ -281,10 +271,8 @@ func _spawn_asteroid_row() -> void:
 func _update_advice() -> void:
 	if player == null or alpha_plan.is_empty():
 		return
-	var player_lane := clampi(floori(player.global_position.x / (1280.0 / lane_count)), 0, lane_count - 1)
-	alpha_route_preview.set_route(_upcoming_lanes(true), player_lane, _upcoming_repair_step(true))
-	beta_route_preview.set_route(_upcoming_lanes(false), player_lane, _upcoming_repair_step(false))
-	_update_guidance_and_fog()
+	world_route_overlay.set_route_rows(active_rows, lane_count)
+	_update_guidance()
 
 
 func _upcoming_lanes(for_alpha: bool) -> Array[int]:
@@ -300,63 +288,19 @@ func _upcoming_lanes(for_alpha: bool) -> Array[int]:
 	return lanes
 
 
-func _upcoming_repair_step(for_alpha: bool) -> int:
-	var step := 0
-	for row in active_rows:
-		if step >= rows_per_sector:
-			return -1
-		if bool(row["has_repair"]) and bool(row["happy_is_alpha"]) == for_alpha:
-			return step
-		step += 1
-	for index in range(sector_row_index, rows_per_sector):
-		if step >= rows_per_sector:
-			break
-		if index == sector_repair_row and sector_happy_is_alpha == for_alpha:
-			return step
-		step += 1
-	return -1
-
-
-func _update_guidance_and_fog() -> void:
+func _update_guidance() -> void:
 	if alpha_plan.is_empty():
 		return
 	var has_trusted_ai := trusted_ai != TrustedAi.NONE
 	player.set_navigation_enabled(has_trusted_ai and not player.is_correcting)
 	player.set_navigation_speed_multiplier(trusted_game_speed_multiplier if has_trusted_ai else 1.0)
 	if not has_trusted_ai:
-		_update_fog()
 		return
 	var navigation_lane := _navigation_lane(trusted_ai == TrustedAi.ALPHA)
 	if navigation_lane < 0:
 		return
 	var lane_width := 1280.0 / lane_count
 	player.set_navigation_target_x((navigation_lane + 0.5) * lane_width)
-	_update_fog()
-
-
-func _update_fog() -> void:
-	var fog_material := fog_field.material as ShaderMaterial
-	if fog_material == null:
-		return
-	var ship_screen_position := player.get_global_transform_with_canvas().origin
-	var ship_uv := Vector2(
-		clampf(ship_screen_position.x / 1280.0, 0.0, 1.0),
-		clampf(ship_screen_position.y / 720.0, 0.0, 1.0)
-	)
-	fog_material.set_shader_parameter("ship_uv", ship_uv)
-	var trust_tint := Color("172c50") if trusted_ai == TrustedAi.ALPHA else Color("421b36")
-	if trusted_ai == TrustedAi.NONE or player.is_correcting:
-		trust_tint = Color("17212d")
-	var base_radius := UNTRUSTED_REVEAL_RADIUS if trusted_ai == TrustedAi.NONE else NORMAL_REVEAL_RADIUS
-	var base_feather := UNTRUSTED_EDGE_FEATHER if trusted_ai == TrustedAi.NONE else NORMAL_EDGE_FEATHER
-	fog_material.set_shader_parameter("fog_color", Color(trust_tint, lerpf(0.94, 0.99, correction_fog_blend)))
-	fog_material.set_shader_parameter("reveal_radius", lerpf(base_radius, CORRECTION_REVEAL_RADIUS, correction_fog_blend))
-	fog_material.set_shader_parameter("edge_feather", lerpf(base_feather, CORRECTION_EDGE_FEATHER, correction_fog_blend))
-
-
-func _update_correction_visibility(delta: float) -> void:
-	var target := 1.0 if player.is_correcting else 0.0
-	correction_fog_blend = move_toward(correction_fog_blend, target, delta * 5.0)
 
 
 func _navigation_lane(for_alpha: bool) -> int:
@@ -427,11 +371,8 @@ func _update_trust_display() -> void:
 	var trust_is_active := trusted_ai != TrustedAi.NONE and trust_handover_left <= 0.0
 	alpha_ai.set_active(trust_is_active and trusted_ai == TrustedAi.ALPHA)
 	beta_ai.set_active(trust_is_active and trusted_ai == TrustedAi.BETA)
-	alpha_route_preview.visible = trusted_ai != TrustedAi.NONE
-	beta_route_preview.visible = trusted_ai != TrustedAi.NONE
-	alpha_route_preview.set_active(trust_is_active and trusted_ai == TrustedAi.ALPHA)
-	beta_route_preview.set_active(trust_is_active and trusted_ai == TrustedAi.BETA)
-	_update_guidance_and_fog()
+	world_route_overlay.visible = trusted_ai != TrustedAi.NONE
+	_update_guidance()
 
 
 func _finish_run(escaped: bool) -> void:
