@@ -114,7 +114,7 @@ offset_right = 405.0
 offset_bottom = 462.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Compare both routes.\nTrust can change at any time."
+text = "Trust a route to accelerate your escape.\nEither AI can change allegiance."
 horizontal_alignment = 1
 
 [node name="CorrectTitle" type="Label" parent="Briefing"]
@@ -134,7 +134,7 @@ offset_right = 832.0
 offset_bottom = 462.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Correction pauses the AI.\nYour sensor view narrows."
+text = "TRUST NO ONE clears your selection.\nRoutes vanish. Press Q or E to reconnect."
 horizontal_alignment = 1
 
 [node name="RecoverTitle" type="Label" parent="Briefing"]

@@ -21,6 +21,8 @@ signal died
 var lives: int
 var invulnerability_left := 0.0
 var navigation_target_x := 640.0
+var navigation_enabled := true
+var navigation_speed_multiplier := 1.0
 var shot_cooldown_left := 0.0
 var is_correcting := false
 
@@ -43,11 +45,13 @@ func _physics_process(delta: float) -> void:
 	var navigation_direction := 0.0
 	if absf(target_delta) > navigation_arrival_distance:
 		navigation_direction = clampf(target_delta / navigation_response_distance, -1.0, 1.0)
-	# Correction temporarily owns steering. The AI resumes when input is released.
-	var direction := manual_direction * manual_correction_influence if is_correcting else navigation_direction * navigation_influence
+	# Correction owns steering and the level clears trust. Navigation remains off
+	# after release until the player deliberately selects an AI again.
+	var direction := manual_direction * manual_correction_influence if is_correcting else navigation_direction * navigation_influence if navigation_enabled else 0.0
 	if absf(direction) < movement_deadzone:
 		direction = 0.0
-	velocity = Vector2(direction * move_speed, 0.0)
+	var speed_multiplier := 1.0 if is_correcting else navigation_speed_multiplier
+	velocity = Vector2(direction * move_speed * speed_multiplier, 0.0)
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 32.0, 1248.0)
 	_update_animation(direction)
@@ -55,6 +59,14 @@ func _physics_process(delta: float) -> void:
 
 func set_navigation_target_x(target_x: float) -> void:
 	navigation_target_x = clampf(target_x, 32.0, 1248.0)
+
+
+func set_navigation_enabled(value: bool) -> void:
+	navigation_enabled = value
+
+
+func set_navigation_speed_multiplier(value: float) -> void:
+	navigation_speed_multiplier = maxf(value, 0.0)
 
 
 func take_hit() -> void:
