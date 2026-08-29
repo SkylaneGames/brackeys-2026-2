@@ -43,20 +43,6 @@ corner_radius_top_right = 14
 corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_escape_background"]
-bg_color = Color(0.04, 0.075, 0.14, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_escape_fill"]
-bg_color = Color(0.39, 0.9, 1, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
 [sub_resource type="StyleBoxFlat" id="StyleBox_heat_background"]
 bg_color = Color(0.04, 0.075, 0.14, 1)
 corner_radius_top_left = 2
@@ -71,6 +57,20 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_escape_background"]
+bg_color = Color(0.04, 0.075, 0.14, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_escape_fill"]
+bg_color = Color(0.39, 0.9, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
 asteroid_scene = ExtResource("3")
@@ -78,8 +78,8 @@ repair_pickup_scene = ExtResource("7_repair")
 row_spacing = 260.0
 asteroid_lane_fill_ratio = 0.7
 risky_asteroid_scale = 0.55
-role_swap_interval = 9.0
-minimum_role_swap_interval = 5.0
+role_swap_interval = 6.0
+minimum_role_swap_interval = 3.0
 player_scene = ExtResource("2")
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="." unique_id=398344153]
@@ -189,7 +189,7 @@ theme_override_colors/font_color = Color(0.55, 0.72, 0.88, 1)
 theme_override_font_sizes/font_size = 18
 text = "SCORE  000000"
 
-[node name="WeaponLabel" type="Label" parent="HUD"]
+[node name="WeaponLabel" type="Label" parent="HUD" unique_id=1711179325]
 unique_name_in_owner = true
 offset_left = 28.0
 offset_top = 91.0
@@ -199,7 +199,7 @@ theme_override_colors/font_color = Color(0.55, 0.97, 1, 1)
 theme_override_font_sizes/font_size = 14
 text = "WEAPON  READY"
 
-[node name="WeaponHeat" type="ProgressBar" parent="HUD"]
+[node name="WeaponHeat" type="ProgressBar" parent="HUD" unique_id=120922371]
 unique_name_in_owner = true
 offset_left = 28.0
 offset_top = 115.0

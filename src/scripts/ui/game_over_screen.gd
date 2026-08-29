@@ -6,7 +6,6 @@ const TRANSITION_DURATION := 0.55
 
 @onready var title: Label = %Title
 @onready var outcome_rule: ColorRect = %OutcomeRule
-@onready var score_value: Label = %ScoreValue
 @onready var time_value: Label = %TimeValue
 @onready var nav_read_value: Label = %NavReadValue
 @onready var nav_accuracy: ProgressBar = %NavAccuracy
@@ -92,7 +91,6 @@ func _play_entrance_transition() -> void:
 
 func _update_outcome() -> void:
 	var seconds := floori(GameManager.final_time)
-	score_value.text = "%06d" % GameManager.final_score
 	time_value.text = "%02d:%02d" % [seconds / 60, seconds % 60]
 	if GameManager.run_escaped:
 		title.text = "ESCAPE COMPLETE"

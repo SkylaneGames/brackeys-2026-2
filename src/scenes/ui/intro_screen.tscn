@@ -127,7 +127,7 @@ offset_right = 405.0
 offset_bottom = 507.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "You start with manual control, trusting no one.\nA / D or arrow keys steer."
+text = "You start trusting no one.\nA / D or arrow keys steer."
 horizontal_alignment = 1
 
 [node name="CorrectTitle" type="Label" parent="Briefing" unique_id=280378752]
@@ -144,13 +144,16 @@ horizontal_alignment = 1
 [node name="CorrectCopy" type="Label" parent="Briefing" unique_id=445533157]
 layout_mode = 0
 offset_left = 475.0
-offset_top = 455.0
+offset_top = 442.0
 offset_right = 805.0
-offset_bottom = 507.0
+offset_bottom = 520.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
-text = "Q trusts Alpha. E trusts Beta.\nTrust reveals routes and accelerates the ship."
+text = "Q trusts Alpha. E trusts Beta.
+Trust reveals routes.
+Trust accelerates the ship."
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="RecoverTitle" type="Label" parent="Briefing" unique_id=2100150605]
 layout_mode = 0
@@ -166,14 +169,16 @@ horizontal_alignment = 1
 [node name="RecoverCopy" type="Label" parent="Briefing" unique_id=318258957]
 layout_mode = 0
 offset_left = 875.0
-offset_top = 455.0
+offset_top = 442.0
 offset_right = 1205.0
-offset_bottom = 507.0
+offset_bottom = 520.0
 theme_override_colors/font_color = Color(0.58, 0.7, 0.84, 1)
 theme_override_font_sizes/font_size = 16
 text = "SPACE shoots amber targets.
-Let the weapon cool. Green pickups repair."
+Let the weapon cool.
+Green pickups repair."
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BeginButton" type="Button" parent="Briefing" unique_id=1561836620]
 unique_name_in_owner = true

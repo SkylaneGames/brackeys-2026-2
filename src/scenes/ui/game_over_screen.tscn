@@ -148,30 +148,11 @@ theme_override_colors/font_color = Color(0.68, 0.79, 0.92, 1)
 theme_override_font_sizes/font_size = 17
 text = "RUN"
 
-[node name="ScoreCaption" type="Label" parent="RunPanel"]
-offset_left = 24.0
-offset_top = 82.0
-offset_right = 272.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(0.42, 0.57, 0.73, 1)
-theme_override_font_sizes/font_size = 14
-text = "FINAL SCORE"
-
-[node name="ScoreValue" type="Label" parent="RunPanel"]
-unique_name_in_owner = true
-offset_left = 24.0
-offset_top = 105.0
-offset_right = 272.0
-offset_bottom = 188.0
-theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
-theme_override_font_sizes/font_size = 36
-text = "000000"
-
 [node name="TimeCaption" type="Label" parent="RunPanel"]
 offset_left = 24.0
-offset_top = 205.0
+offset_top = 116.0
 offset_right = 272.0
-offset_bottom = 241.0
+offset_bottom = 152.0
 theme_override_colors/font_color = Color(0.42, 0.57, 0.73, 1)
 theme_override_font_sizes/font_size = 14
 text = "FLIGHT TIME"
@@ -179,9 +160,9 @@ text = "FLIGHT TIME"
 [node name="TimeValue" type="Label" parent="RunPanel"]
 unique_name_in_owner = true
 offset_left = 24.0
-offset_top = 231.0
+offset_top = 142.0
 offset_right = 272.0
-offset_bottom = 290.0
+offset_bottom = 201.0
 theme_override_colors/font_color = Color(0.72, 0.86, 1, 1)
 theme_override_font_sizes/font_size = 30
 text = "00:00"
