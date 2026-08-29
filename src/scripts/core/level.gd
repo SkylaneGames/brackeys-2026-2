@@ -6,6 +6,7 @@ enum FailureReason { OBJECTIVE_FAILED, ENVIRONMENT }
 signal completed
 signal failed(reason: FailureReason)
 signal player_died
+signal run_result_changed(score: int, elapsed_time: float)
 
 @export var player_scene: PackedScene
 @onready var player_spawn: Marker2D = %PlayerSpawn
