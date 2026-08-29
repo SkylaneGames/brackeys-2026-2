@@ -150,7 +150,7 @@ font_names = PackedStringArray("ESPACION")
 
 [sub_resource type="LabelSettings" id="LabelSettings_w5pmr"]
 font = SubResource("SystemFont_mqmln")
-font_size = 36
+font_size = 25
 
 [node name="AiNavSystem" type="Control" unique_id=1385449579]
 layout_mode = 3
@@ -173,9 +173,9 @@ frame_progress = 0.5169853
 
 [node name="Label" type="Label" parent="." unique_id=1097689407]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 176.0
-offset_right = 136.0
-offset_bottom = 212.0
+offset_top = 169.0
+offset_right = 160.0
+offset_bottom = 201.0
 text = "NAV X"
 label_settings = SubResource("LabelSettings_w5pmr")
+horizontal_alignment = 1

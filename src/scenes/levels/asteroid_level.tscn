@@ -3,21 +3,37 @@
 [ext_resource type="Script" uid="uid://xnnmojxqbril" path="res://scripts/levels/asteroid_level.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://4tafg0sl2ysx" path="res://scenes/player/player.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://co1ifmdmpkc6m" path="res://scenes/asteroids/asteroid.tscn" id="3"]
-[ext_resource type="Shader" path="res://shaders/sensor_fog.gdshader" id="4_fog"]
+[ext_resource type="Shader" uid="uid://da24gqo5sax6j" path="res://shaders/sensor_fog.gdshader" id="4_fog"]
+[ext_resource type="PackedScene" uid="uid://kejnbd2s31om" path="res://scenes/ai_systems/ai_nav_system.tscn" id="5_ai"]
+[ext_resource type="Script" path="res://scripts/ui/route_preview.gd" id="6_route"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/repair_pickup.tscn" id="7_repair"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fog"]
 shader = ExtResource("4_fog")
+shader_parameter/ship_uv = Vector2(0.5, 0.8)
+shader_parameter/fog_color = Color(0.025, 0.055, 0.11, 0.92)
+shader_parameter/reveal_radius = 0.19
+shader_parameter/edge_feather = 0.095
+shader_parameter/screen_aspect = 1.77778
 
 [node name="AsteroidLevel" type="Node2D" unique_id=2096419723]
 script = ExtResource("1")
 asteroid_scene = ExtResource("3")
-lane_count = 12
-row_spacing = 200.0
-asteroid_fall_speed = 115.0
-maximum_fall_speed = 220.0
+repair_pickup_scene = ExtResource("7_repair")
+lane_count = 8
+asteroid_fall_speed = 90.0
+row_spacing = 260.0
+trust_handover_delay = 0.25
+benign_lie_chance = 0.45
+asteroid_lane_fill_ratio = 0.6
+risky_asteroid_scale = 0.55
+maximum_fall_speed = 110.0
 player_scene = ExtResource("2")
 
-[node name="Background" type="ColorRect" parent="." unique_id=713196841]
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Background" type="ColorRect" parent="BackgroundLayer" unique_id=713196841]
 offset_right = 1280.0
 offset_bottom = 720.0
 mouse_filter = 2
@@ -32,125 +48,167 @@ position = Vector2(640, 600)
 [node name="AsteroidSpawnTimer" type="Timer" parent="." unique_id=1113731076]
 unique_name_in_owner = true
 
-[node name="FogLayer" type="CanvasLayer" parent="."]
-layer = 1
+[node name="FogLayer" type="CanvasLayer" parent="." unique_id=2114867131]
 
-[node name="FogField" type="ColorRect" parent="FogLayer"]
+[node name="FogField" type="ColorRect" parent="FogLayer" unique_id=585664581]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_fog")
 offset_right = 1280.0
-offset_top = 108.0
 offset_bottom = 720.0
 mouse_filter = 2
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1844752192]
 layer = 2
 
-[node name="TopShade" type="ColorRect" parent="HUD"]
+[node name="BottomShade" type="ColorRect" parent="HUD" unique_id=1539765227]
+offset_top = 640.0
 offset_right = 1280.0
-offset_bottom = 108.0
+offset_bottom = 720.0
 mouse_filter = 2
 color = Color(0.02, 0.035, 0.09, 0.94)
 
-[node name="Divider" type="ColorRect" parent="HUD"]
-offset_top = 104.0
+[node name="Divider" type="ColorRect" parent="HUD" unique_id=1102347671]
+offset_top = 640.0
 offset_right = 1280.0
-offset_bottom = 108.0
+offset_bottom = 644.0
 mouse_filter = 2
 color = Color(0.2, 0.7, 0.9, 0.75)
+
+[node name="AlphaPanel" type="ColorRect" parent="HUD"]
+offset_top = 430.0
+offset_right = 386.0
+offset_bottom = 640.0
+mouse_filter = 2
+color = Color(0.02, 0.035, 0.09, 0.82)
+
+[node name="BetaPanel" type="ColorRect" parent="HUD"]
+offset_left = 894.0
+offset_top = 430.0
+offset_right = 1280.0
+offset_bottom = 640.0
+mouse_filter = 2
+color = Color(0.02, 0.035, 0.09, 0.82)
+
+[node name="AlphaAI" parent="HUD" instance=ExtResource("5_ai")]
+unique_name_in_owner = true
+offset_left = 12.0
+offset_top = 454.0
+offset_right = 172.0
+offset_bottom = 650.0
+scale = Vector2(0.68, 0.68)
+designation = "ALPHA"
+is_active = true
+modulate = Color(0.39, 0.9, 1, 1)
+
+[node name="BetaAI" parent="HUD" instance=ExtResource("5_ai")]
+unique_name_in_owner = true
+offset_left = 1158.0
+offset_top = 454.0
+offset_right = 1318.0
+offset_bottom = 650.0
+scale = Vector2(0.68, 0.68)
+designation = "BETA"
+modulate = Color(1, 0.42, 0.66, 1)
 
 [node name="LivesLabel" type="Label" parent="HUD" unique_id=482107304]
 unique_name_in_owner = true
 offset_left = 28.0
-offset_top = 20.0
+offset_top = 651.0
 offset_right = 218.0
-offset_bottom = 55.0
+offset_bottom = 680.0
 theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
 theme_override_font_sizes/font_size = 22
 text = "LIVES: 3"
 
-[node name="ScoreLabel" type="Label" parent="HUD"]
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=1951831062]
 unique_name_in_owner = true
 offset_left = 28.0
-offset_top = 58.0
+offset_top = 683.0
 offset_right = 230.0
-offset_bottom = 88.0
+offset_bottom = 711.0
 theme_override_colors/font_color = Color(0.55, 0.72, 0.88, 1)
 theme_override_font_sizes/font_size = 18
 text = "SCORE  000000"
 
-[node name="AlphaTitle" type="Label" parent="HUD"]
-offset_left = 300.0
-offset_top = 12.0
-offset_right = 500.0
-offset_bottom = 42.0
+[node name="AlphaTitle" type="Label" parent="HUD" unique_id=2062170239]
+offset_left = 132.0
+offset_top = 438.0
+offset_right = 370.0
+offset_bottom = 468.0
 theme_override_colors/font_color = Color(0.39, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "ALPHA  [Q]"
-horizontal_alignment = 1
-
-[node name="AlphaAdvice" type="Label" parent="HUD"]
-unique_name_in_owner = true
-offset_left = 300.0
-offset_top = 38.0
-offset_right = 500.0
-offset_bottom = 90.0
-theme_override_colors/font_color = Color(0.78, 0.97, 1, 1)
 theme_override_font_sizes/font_size = 22
-text = "|"
+text = "[ Q ]   ALPHA"
 horizontal_alignment = 1
 
-[node name="TrustLabel" type="Label" parent="HUD"]
+[node name="AlphaRoutePreview" type="Control" parent="HUD"]
 unique_name_in_owner = true
-offset_left = 500.0
-offset_top = 22.0
-offset_right = 780.0
-offset_bottom = 62.0
+offset_left = 146.0
+offset_top = 470.0
+offset_right = 374.0
+offset_bottom = 632.0
+mouse_filter = 2
+script = ExtResource("6_route")
+route_color = Color(0.39, 0.9, 1, 1)
+
+[node name="TrustLabel" type="Label" parent="HUD" unique_id=931355334]
+unique_name_in_owner = true
+offset_left = 470.0
+offset_top = 651.0
+offset_right = 810.0
+offset_bottom = 684.0
 theme_override_font_sizes/font_size = 26
 text = "TRUST: ALPHA"
 horizontal_alignment = 1
 
-[node name="Controls" type="Label" parent="HUD"]
-offset_left = 500.0
-offset_top = 66.0
-offset_right = 780.0
-offset_bottom = 91.0
+[node name="Controls" type="Label" parent="HUD" unique_id=1579387445]
+offset_left = 425.0
+offset_top = 688.0
+offset_right = 855.0
+offset_bottom = 713.0
 theme_override_colors/font_color = Color(0.48, 0.58, 0.72, 1)
 theme_override_font_sizes/font_size = 14
-text = "CORRECT  A / D     PAUSE  ESC"
+text = "CORRECT  A / D     FIRE  SPACE     PAUSE  ESC"
 horizontal_alignment = 1
 
-[node name="BetaTitle" type="Label" parent="HUD"]
-offset_left = 780.0
-offset_top = 12.0
-offset_right = 980.0
-offset_bottom = 42.0
+[node name="BetaTitle" type="Label" parent="HUD" unique_id=85234903]
+offset_left = 910.0
+offset_top = 438.0
+offset_right = 1148.0
+offset_bottom = 468.0
 theme_override_colors/font_color = Color(1, 0.42, 0.66, 1)
-theme_override_font_sizes/font_size = 18
-text = "BETA  [E]"
-horizontal_alignment = 1
-
-[node name="BetaAdvice" type="Label" parent="HUD"]
-unique_name_in_owner = true
-offset_left = 780.0
-offset_top = 38.0
-offset_right = 980.0
-offset_bottom = 90.0
-theme_override_colors/font_color = Color(1, 0.78, 0.88, 1)
 theme_override_font_sizes/font_size = 22
-text = "|"
+text = "BETA   [ E ]"
 horizontal_alignment = 1
 
-[node name="TimeLabel" type="Label" parent="HUD"]
+[node name="BetaRoutePreview" type="Control" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 910.0
+offset_top = 470.0
+offset_right = 1138.0
+offset_bottom = 632.0
+mouse_filter = 2
+script = ExtResource("6_route")
+route_color = Color(1, 0.42, 0.66, 1)
+
+[node name="TimeLabel" type="Label" parent="HUD" unique_id=1271600366]
 unique_name_in_owner = true
 offset_left = 1040.0
-offset_top = 32.0
+offset_top = 663.0
 offset_right = 1252.0
-offset_bottom = 72.0
+offset_bottom = 700.0
 theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
 theme_override_font_sizes/font_size = 22
 text = "TIME  00:00"
 horizontal_alignment = 2
+
+[node name="DebugTrustButton" type="Button" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 386.0
+offset_right = 285.0
+offset_bottom = 422.0
+theme_override_font_sizes/font_size = 14
+text = "DEBUG: REVEAL STEERING AI"
 
 [node name="PauseMenu" type="Control" parent="HUD" unique_id=1460851952]
 unique_name_in_owner = true

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b3csfnuj3j517" path="res://assets/sprites/explosion_1.png" id="1_8dm26"]
 [ext_resource type="AudioStream" uid="uid://c1qwpu3n1insq" path="res://assets/sounds/crash_1.ogg" id="2_fqp2o"]
+[ext_resource type="Script" path="res://scripts/effects/explosion.gd" id="3_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fqp2o"]
 atlas = ExtResource("1_8dm26")
@@ -110,6 +111,7 @@ animations = [{
 }]
 
 [node name="Explosion" type="Node2D" unique_id=1387094098]
+script = ExtResource("3_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1255631307]
 scale = Vector2(3, 3)
