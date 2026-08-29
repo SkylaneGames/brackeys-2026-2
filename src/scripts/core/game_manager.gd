@@ -1,11 +1,12 @@
 extends Node
 
-enum GameState { TITLE, PLAYING, PAUSED, GAME_OVER }
+enum GameState { TITLE, INTRO, PLAYING, PAUSED, GAME_OVER }
 enum FailureReason { PLAYER_DIED, LEVEL_FAILED }
 
 signal state_changed(state: GameState)
 
 const TITLE_SCENE := "res://scenes/ui/title_screen.tscn"
+const INTRO_SCENE := "res://scenes/ui/intro_screen.tscn"
 const GAME_OVER_SCENE := "res://scenes/ui/game_over_screen.tscn"
 const LEVEL_SCENES: Array[String] = ["res://scenes/levels/asteroid_level.tscn"]
 
@@ -33,6 +34,12 @@ func start_run() -> void:
 	get_tree().paused = false
 	_set_state(GameState.PLAYING)
 	_change_scene(LEVEL_SCENES[current_level_index])
+
+
+func show_intro() -> void:
+	get_tree().paused = false
+	_set_state(GameState.INTRO)
+	_change_scene(INTRO_SCENE)
 
 
 func restart_run() -> void:

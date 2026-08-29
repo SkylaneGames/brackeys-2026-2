@@ -6,4 +6,4 @@ func _ready() -> void:
 
 
 func _on_start_pressed() -> void:
-	GameManager.start_run()
+	GameManager.show_intro()
