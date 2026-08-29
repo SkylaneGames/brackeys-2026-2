@@ -3,10 +3,19 @@ extends Area2D
 
 @export var fall_speed := 180.0
 @export var despawn_y := 780.0
+@export var textures: Array[Texture2D] = [
+	preload("res://assets/sprites/asteroid_1.png"),
+	preload("res://assets/sprites/asteroid_2.png"),
+	preload("res://assets/sprites/asteroid_3.png"),
+]
+
+@onready var sprite_2d: Sprite2D = $Sprite2D
 
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
+	if not textures.is_empty():
+		sprite_2d.texture = textures.pick_random()
 
 
 func _physics_process(delta: float) -> void:
