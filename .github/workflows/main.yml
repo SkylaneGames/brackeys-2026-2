@@ -181,14 +181,14 @@ jobs:
         run: ./butler.exe push ./bin $env:itch_channel
         shell: powershell
 
-  notify:
-    runs-on: ubuntu-latest
-    needs: [deploy-webgl, deploy-win64, deploy-linux]
-    name: Notify Discord
-    env:
-      itch_url: https://${{ secrets.ITCH_USERNAME }}.itch.io/${{ secrets.ITCH_GAME_NAME }}
-    if: success() 
-    steps:
-      - name: Notify Discord
-        run: |
-          curl -X POST -H "Content-Type: application/json" --data '{"content":"New build deployed - '"$itch_url"'"}' "${{ secrets.DISCORD_WEBHOOK_URL }}"
+#   notify:
+#     runs-on: ubuntu-latest
+#     needs: [deploy-webgl, deploy-win64, deploy-linux]
+#     name: Notify Discord
+#     env:
+#       itch_url: https://${{ secrets.ITCH_USERNAME }}.itch.io/${{ secrets.ITCH_GAME_NAME }}
+#     if: success() 
+#     steps:
+#       - name: Notify Discord
+#         run: |
+#           curl -X POST -H "Content-Type: application/json" --data '{"content":"New build deployed - '"$itch_url"'"}' "${{ secrets.DISCORD_WEBHOOK_URL }}"
