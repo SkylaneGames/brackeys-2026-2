@@ -1,6 +1,5 @@
 extends Level
 
-const RISKY_PATH_OFFSETS: Array[int] = [-1, 0, 1]
 const ROW_CLEARANCE_DISTANCE := 70.0
 const NORMAL_REVEAL_RADIUS := 0.19
 const NORMAL_EDGE_FEATHER := 0.095
@@ -14,22 +13,23 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @export var asteroid_scene: PackedScene
 @export var repair_pickup_scene: PackedScene
 @export_range(5, 20) var lane_count := 8
-@export_range(1.0, 1000.0) var asteroid_fall_speed := 180.0
+@export_range(1.0, 1000.0) var asteroid_fall_speed := 240.0
 @export_range(80.0, 400.0) var row_spacing := 150.0
 @export_range(3, 6) var rows_per_sector := 4
 @export_range(0.0, 3.0) var trust_handover_delay := 0.25
-@export_range(0.0, 1.0) var benign_lie_chance := 0.45
-@export_range(0.4, 0.9) var asteroid_lane_fill_ratio := 0.6
-@export_range(0.3, 1.0) var risky_asteroid_scale := 0.55
-@export_range(0.0, 1.0) var two_lane_move_chance := 0.10
-@export_range(0.0, 1.0) var repair_sector_chance := 0.7
-@export_range(1.0, 2.0) var trusted_game_speed_multiplier := 1.3
-@export var speed_transition_rate := 180.0
-@export var escape_distance := 9000.0
-@export var escape_time_limit := 100.0
+@export_range(0.0, 1.0) var benign_lie_chance := 0.10
+@export_range(0.0, 1.0) var risky_destructible_chance := 0.35
+@export_range(0.4, 0.9) var asteroid_lane_fill_ratio := 0.65
+@export_range(0.3, 1.0) var risky_asteroid_scale := 0.7
+@export_range(0.0, 1.0) var two_lane_move_chance := 0.0
+@export_range(0.0, 1.0) var repair_sector_chance := 0.5
+@export_range(1.0, 4.0) var trusted_game_speed_multiplier := 1.5
+@export var speed_transition_rate := 200.0
+@export var escape_distance := 15000.0
+@export var escape_time_limit := 60.0
 @export var role_swap_interval := 15.0
 @export var minimum_role_swap_interval := 8.0
-@export var maximum_fall_speed := 220.0
+@export var maximum_fall_speed := 400.0
 
 @onready var lives_label: Label = %LivesLabel
 @onready var pause_menu: Control = %PauseMenu
@@ -67,6 +67,7 @@ var beta_plan: Array[int] = []
 var happy_plan: Array[int] = []
 var risky_plan: Array[int] = []
 var liar_route_is_clear: Array[bool] = []
+var liar_blocker_is_destructible: Array[bool] = []
 var sector_repair_row := -1
 var active_rows: Array[Dictionary] = []
 var sector_row_index := 0
@@ -171,10 +172,11 @@ func _generate_sector() -> void:
 	happy_plan.clear()
 	risky_plan.clear()
 	liar_route_is_clear.clear()
+	liar_blocker_is_destructible.clear()
 	sector_row_index = 0
 	sector_repair_row = randi_range(0, rows_per_sector - 1) if player.lives < player.starting_lives and randf() < repair_sector_chance else -1
 	var happy_lane := safe_lane
-	var risky_lane := _choose_distinct_lane(happy_lane)
+	var risky_lane := happy_lane
 	for row in rows_per_sector:
 		var previous_happy_lane := happy_lane
 		happy_lane = clampi(happy_lane + _happy_path_offset(), 0, lane_count - 1)
@@ -182,13 +184,13 @@ func _generate_sector() -> void:
 		# two lanes. Keep the assertion close to generation so this guarantee cannot
 		# silently regress as procedural variation is added.
 		assert(absi(happy_lane - previous_happy_lane) <= 2)
-		risky_lane = clampi(risky_lane + RISKY_PATH_OFFSETS.pick_random(), 0, lane_count - 1)
-		if risky_lane == happy_lane:
-			risky_lane = _choose_distinct_lane(happy_lane)
+		risky_lane = _choose_adjacent_risky_lane(happy_lane, risky_lane)
+		assert(absi(risky_lane - happy_lane) == 1)
 		happy_plan.append(happy_lane)
 		risky_plan.append(risky_lane)
 		# Repair rows make both choices safe; the better read earns recovery.
 		liar_route_is_clear.append(row == sector_repair_row or randf() < benign_lie_chance)
+		liar_blocker_is_destructible.append(randf() < risky_destructible_chance)
 	safe_lane = happy_plan[happy_plan.size() - 1]
 	if alpha_is_honest:
 		alpha_plan.assign(happy_plan)
@@ -200,12 +202,19 @@ func _generate_sector() -> void:
 	_update_advice()
 
 
-func _choose_distinct_lane(excluded_lane: int) -> int:
+func _choose_adjacent_risky_lane(happy_lane: int, previous_risky_lane: int) -> int:
 	var options: Array[int] = []
-	for lane in lane_count:
-		if lane != excluded_lane:
-			options.append(lane)
-	return options.pick_random()
+	if happy_lane > 0:
+		options.append(happy_lane - 1)
+	if happy_lane < lane_count - 1:
+		options.append(happy_lane + 1)
+	assert(not options.is_empty())
+	options.shuffle()
+	var chosen_lane := options[0]
+	for option in options:
+		if absi(option - previous_risky_lane) < absi(chosen_lane - previous_risky_lane):
+			chosen_lane = option
+	return chosen_lane
 
 
 func _happy_path_offset() -> int:
@@ -249,7 +258,7 @@ func _spawn_asteroid_row() -> void:
 		var asteroid_scale := lane_width * asteroid_lane_fill_ratio / 112.0
 		if lane == liar_lane:
 			asteroid_scale *= risky_asteroid_scale
-			asteroid.set_destructible(true)
+			asteroid.set_destructible(liar_blocker_is_destructible[sector_row_index])
 		asteroid.scale = Vector2.ONE * asteroid_scale
 		asteroid.fall_speed = current_fall_speed
 		asteroids.add_child(asteroid)
