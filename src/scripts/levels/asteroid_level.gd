@@ -34,7 +34,7 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @onready var pause_menu: Control = %PauseMenu
 @onready var spawn_timer: Timer = %AsteroidSpawnTimer
 @onready var asteroids: Node2D = $Asteroids
-@onready var starfield: Starfield = %Starfield
+@onready var starfield: Control = %Starfield
 @onready var world_route_overlay: Node2D = %WorldRouteOverlay
 @onready var trust_label: Label = %TrustLabel
 @onready var score_label: Label = %ScoreLabel
@@ -95,7 +95,7 @@ func _ready() -> void:
 	debug_trust_button.pressed.connect(_on_debug_trust_pressed)
 	safe_lane = floori(lane_count / 2.0)
 	current_fall_speed = asteroid_fall_speed
-	starfield.set_travel_speed(current_fall_speed)
+	_sync_starfield_speed()
 	distance_remaining = escape_distance
 	escape_progress.max_value = escape_distance
 	role_swap_left = _next_role_swap_interval()
@@ -427,7 +427,7 @@ func _update_difficulty(delta: float) -> void:
 
 func _set_current_fall_speed(value: float) -> void:
 	current_fall_speed = maxf(value, 1.0)
-	starfield.set_travel_speed(current_fall_speed)
+	_sync_starfield_speed()
 	spawn_timer.wait_time = row_spacing / current_fall_speed
 	for child in asteroids.get_children():
 		var asteroid := child as Asteroid
@@ -435,6 +435,13 @@ func _set_current_fall_speed(value: float) -> void:
 			asteroid.set_fall_speed(current_fall_speed)
 		elif child.has_method("set_fall_speed"):
 			child.set_fall_speed(current_fall_speed)
+
+
+func _sync_starfield_speed() -> void:
+	# Keep presentation optional so a starfield problem can never prevent gameplay
+	# systems from starting in an exported build.
+	if starfield != null and starfield.has_method("set_travel_speed"):
+		starfield.call("set_travel_speed", current_fall_speed)
 
 
 func _update_hud() -> void:
