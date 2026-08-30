@@ -79,7 +79,7 @@ row_spacing = 260.0
 asteroid_lane_fill_ratio = 0.7
 risky_asteroid_scale = 0.55
 role_swap_interval = 6.0
-minimum_role_swap_interval = 3.0
+minimum_role_swap_interval = 2.0
 player_scene = ExtResource("2")
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="." unique_id=398344153]
