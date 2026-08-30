@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://kejnbd2s31om" path="res://scenes/ai_systems/ai_nav_system.tscn" id="5_ai"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/repair_pickup.tscn" id="7_repair"]
 [ext_resource type="Script" uid="uid://cxe02e20wytuc" path="res://scripts/ui/world_route_overlay.gd" id="8_world_route"]
+[ext_resource type="Script" path="res://scripts/effects/starfield.gd" id="9_starfield"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_hud_neutral"]
 bg_color = Color(0.025, 0.055, 0.11, 0.88)
@@ -90,6 +91,17 @@ offset_right = 1280.0
 offset_bottom = 720.0
 mouse_filter = 2
 color = Color(0.015, 0.02, 0.055, 1)
+
+[node name="Starfield" type="Control" parent="BackgroundLayer"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("9_starfield")
 
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1703224916]
 unique_name_in_owner = true

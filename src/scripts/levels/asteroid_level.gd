@@ -34,6 +34,7 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @onready var pause_menu: Control = %PauseMenu
 @onready var spawn_timer: Timer = %AsteroidSpawnTimer
 @onready var asteroids: Node2D = $Asteroids
+@onready var starfield: Starfield = %Starfield
 @onready var world_route_overlay: Node2D = %WorldRouteOverlay
 @onready var trust_label: Label = %TrustLabel
 @onready var score_label: Label = %ScoreLabel
@@ -94,6 +95,7 @@ func _ready() -> void:
 	debug_trust_button.pressed.connect(_on_debug_trust_pressed)
 	safe_lane = floori(lane_count / 2.0)
 	current_fall_speed = asteroid_fall_speed
+	starfield.set_travel_speed(current_fall_speed)
 	distance_remaining = escape_distance
 	escape_progress.max_value = escape_distance
 	role_swap_left = _next_role_swap_interval()
@@ -425,6 +427,7 @@ func _update_difficulty(delta: float) -> void:
 
 func _set_current_fall_speed(value: float) -> void:
 	current_fall_speed = maxf(value, 1.0)
+	starfield.set_travel_speed(current_fall_speed)
 	spawn_timer.wait_time = row_spacing / current_fall_speed
 	for child in asteroids.get_children():
 		var asteroid := child as Asteroid
