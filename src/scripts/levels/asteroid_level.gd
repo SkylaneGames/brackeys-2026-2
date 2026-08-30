@@ -1,6 +1,9 @@
 extends Level
 
 const ROW_CLEARANCE_DISTANCE := 70.0
+const STAR_COUNT := 150
+const STAR_REFERENCE_SPEED := 280.0
+const STAR_DRIFT_AT_REFERENCE := 7.0
 
 enum TrustedAi { NONE, ALPHA, BETA }
 
@@ -34,7 +37,6 @@ enum TrustedAi { NONE, ALPHA, BETA }
 @onready var pause_menu: Control = %PauseMenu
 @onready var spawn_timer: Timer = %AsteroidSpawnTimer
 @onready var asteroids: Node2D = $Asteroids
-@onready var starfield: Control = %Starfield
 @onready var world_route_overlay: Node2D = %WorldRouteOverlay
 @onready var trust_label: Label = %TrustLabel
 @onready var score_label: Label = %ScoreLabel
@@ -82,6 +84,7 @@ var liar_blocker_is_destructible: Array[bool] = []
 var sector_repair_row := -1
 var active_rows: Array[Dictionary] = []
 var sector_row_index := 0
+var background_stars: Array[Vector3] = []
 
 
 func _ready() -> void:
@@ -93,9 +96,9 @@ func _ready() -> void:
 	_on_weapon_heat_changed(player.weapon_heat, player.weapon_overheated)
 	GameManager.state_changed.connect(_on_game_state_changed)
 	debug_trust_button.pressed.connect(_on_debug_trust_pressed)
+	_initialize_background_stars()
 	safe_lane = floori(lane_count / 2.0)
 	current_fall_speed = asteroid_fall_speed
-	_sync_starfield_speed()
 	distance_remaining = escape_distance
 	escape_progress.max_value = escape_distance
 	role_swap_left = _next_role_swap_interval()
@@ -110,6 +113,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if run_finished:
 		return
+	_update_background_stars(delta)
 	elapsed_time += delta
 	if trusted_ai == TrustedAi.NONE:
 		manual_time += delta
@@ -427,7 +431,6 @@ func _update_difficulty(delta: float) -> void:
 
 func _set_current_fall_speed(value: float) -> void:
 	current_fall_speed = maxf(value, 1.0)
-	_sync_starfield_speed()
 	spawn_timer.wait_time = row_spacing / current_fall_speed
 	for child in asteroids.get_children():
 		var asteroid := child as Asteroid
@@ -437,11 +440,40 @@ func _set_current_fall_speed(value: float) -> void:
 			child.set_fall_speed(current_fall_speed)
 
 
-func _sync_starfield_speed() -> void:
-	# Keep presentation optional so a starfield problem can never prevent gameplay
-	# systems from starting in an exported build.
-	if starfield != null and starfield.has_method("set_travel_speed"):
-		starfield.call("set_travel_speed", current_fall_speed)
+func _initialize_background_stars() -> void:
+	var random := RandomNumberGenerator.new()
+	random.seed = 4097
+	for index in STAR_COUNT:
+		background_stars.append(Vector3(
+			random.randf_range(0.0, 1280.0),
+			random.randf_range(0.0, 720.0),
+			random.randf_range(0.5, 1.8)
+		))
+	queue_redraw()
+
+
+func _update_background_stars(delta: float) -> void:
+	var speed_ratio := current_fall_speed / STAR_REFERENCE_SPEED
+	for index in background_stars.size():
+		var star := background_stars[index]
+		star.y += star.z * STAR_DRIFT_AT_REFERENCE * speed_ratio * delta
+		if star.y > 720.0:
+			star.y = 0.0
+		background_stars[index] = star
+	queue_redraw()
+
+
+func _draw() -> void:
+	# Counter the horizontal camera motion so the distant field remains fixed to
+	# the viewport while still being drawn below gameplay children.
+	var camera_offset_x := player.global_position.x - 640.0 if player != null else 0.0
+	for star in background_stars:
+		var brightness := 0.35 + star.z * 0.28
+		draw_circle(
+			Vector2(star.x + camera_offset_x, star.y),
+			star.z,
+			Color(brightness, brightness, brightness + 0.12, 0.9)
+		)
 
 
 func _update_hud() -> void:

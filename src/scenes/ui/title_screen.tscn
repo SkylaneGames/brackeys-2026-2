@@ -1,6 +1,55 @@
 [gd_scene format=3 uid="uid://le81vgnolpcw"]
 
 [ext_resource type="Script" uid="uid://dsxbpanocgowq" path="res://scripts/ui/title_screen.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/artwork/TrustVector Splash.png" id="2_splash"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_launch_bar"]
+bg_color = Color(0.015, 0.025, 0.06, 0.84)
+border_width_left = 1
+border_width_top = 2
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.65, 0.9, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_start_normal"]
+bg_color = Color(0.035, 0.12, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.82, 1, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_start_hover"]
+bg_color = Color(0.06, 0.22, 0.34, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.92, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_start_pressed"]
+bg_color = Color(0.02, 0.08, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.82, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="TitleScreen" type="Control" unique_id=968941271]
 layout_mode = 3
@@ -20,7 +69,31 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.025, 0.035, 0.08, 1)
 
-[node name="Center" type="CenterContainer" parent="." unique_id=224500059]
+[node name="Splash" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_splash")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="LaunchBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -252.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 88.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBox_launch_bar")
+
+[node name="Center" type="CenterContainer" parent="LaunchBar" unique_id=224500059]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,19 +101,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Menu" type="VBoxContainer" parent="Center" unique_id=1504346523]
+[node name="Menu" type="VBoxContainer" parent="LaunchBar/Center" unique_id=1504346523]
 layout_mode = 2
-theme_override_constants/separation = 24
 
-[node name="Title" type="Label" parent="Center/Menu" unique_id=511612150]
+[node name="StartButton" type="Button" parent="LaunchBar/Center/Menu" unique_id=1582538199]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(204, 42)
 layout_mode = 2
-theme_override_font_sizes/font_size = 52
-text = "TRUST VECTOR"
-horizontal_alignment = 1
-
-[node name="Start" type="Button" parent="Center/Menu" unique_id=1582538199]
-custom_minimum_size = Vector2(320, 64)
-layout_mode = 2
+focus_neighbor_top = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+theme_override_colors/font_color = Color(0.88, 0.97, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_start_normal")
+theme_override_styles/hover = SubResource("StyleBox_start_hover")
+theme_override_styles/pressed = SubResource("StyleBox_start_pressed")
+theme_override_styles/focus = SubResource("StyleBox_start_hover")
 text = "BEGIN BRIEFING"
 
-[connection signal="pressed" from="Center/Menu/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="LaunchBar/Center/Menu/StartButton" to="." method="_on_start_pressed"]
